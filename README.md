@@ -2,8 +2,8 @@
 
 Elijah's project notebook, kept like an explorer's field journal.
 
-- **The Almanac:** https://lijeythefox.github.io/almanac/
-- **Arc Reactor Cell (3D model):** https://lijeythefox.github.io/almanac/reactor.html
+- **The Almanac:** https://lijeythefox.github.io/The-Almanac/
+- **Arc Reactor Cell (3D model):** https://lijeythefox.github.io/The-Almanac/reactor.html
 
 ## Entries
 
