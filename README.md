@@ -9,8 +9,12 @@ Elijah's project notebook, kept like an explorer's field journal.
 
 | No. | Entry | Date |
 |---|---|---|
-| I | Mini Radar | 11 Oct 2026 |
-| II | Colour Mixer | 11 Oct 2026 |
-| III | The Arc Reactor Cell (electrolysis) | 22 Oct 2026 |
+| I | Mini Radar (V2) | 11 Oct 2026 |
+| II | Colour Mixer (V1) | 11 Oct 2026 |
+| III | The Arc Reactor Cell (electrolysis, V3) | 22 Oct 2026 |
 
 Each page is a single self-contained HTML file. Open it in a browser, no build step.
+
+## Versions
+
+Every entry keeps a version log (V1, V2, V3...) with a short description and the pros and cons of each version.
