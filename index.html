@@ -1936,6 +1936,120 @@ p{margin:0 0 12px}
       <div class="foot"><span>— E.</span><span>entry VIII</span></div>
     </article>
 
+    <article id="e010" data-no="X" data-title="MG90S Hexapod" data-sub="Six-legged walker + ESP32 remote" data-date="24 Oct 2026">
+      <div class="dateline"><span>Entry No. 010</span><span>24 October 2026</span><span>Subject: Robotics &amp; build</span></div>
+      <h2 class="entry-title">The MG90S Hexapod</h2>
+      <svg class="underline" viewBox="0 0 420 12" aria-hidden="true"><path d="M2 7C90 4 170 9 250 6S370 4 418 8" fill="none" stroke="var(--sepia)" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <p class="lede">A six-legged spider robot for school. Started from a big MG996R hexapod and shrank it down to run on <span class="circled">MG90S micro servos</span>, as big as they can carry while still walking fast. ESP32 brain, ESP32 remote, talking over ESP-NOW.</p>
+      <p style="margin-top:14px"><a class="ink-link" href="https://lijeythefox.github.io/The-Almanac/hexapod.html" target="_blank" rel="noopener">Open the 3D build + wiring guide →</a> &nbsp;·&nbsp; <a class="ink-link" href="hexapod/walk-cycle.mp4" target="_blank" rel="noopener">watch the walk cycle →</a> &nbsp;·&nbsp; <a class="ink-link" href="hexapod/Hexapod_MG90S_All_Files.zip">all print files (zip) →</a></p>
+
+      <section class="versions">
+        <h3>Versions <small>V1 → V4</small></h3>
+        <div class="vlog">
+          <div class="ver"><div class="vtag">V1</div><div class="vbody"><h4>Original MG996R spider <span>20 Oct 2026</span></h4><p>The design I started from: Arduino Mega, NRF24 remote, 18 big MG996R servos, 25 cm body.</p><ul class="pc"><li class="pro">Strong servos, proven design</li><li class="con">Big, heavy and expensive to build</li><li class="con">MG90S servos would be too weak to hold it up</li></ul></div></div>
+          <div class="ver"><div class="vtag">V2</div><div class="vbody"><h4>Shrunk for MG90S <span>20 Oct 2026</span></h4><p>Redrawn from scratch about 60–65% size. Flush servo pockets, MR85ZZ bearings on every joint, ESP32-C3 + 2 PCA9685 boards, 2S LiPo.</p><ul class="pc"><li class="pro">About 700 g, with roughly 2.4× the femur torque it needs</li><li class="pro">Tripod walk at about 10 cm/s, checked for collisions</li><li class="con">Small servos, so no carrying stuff on its back</li></ul></div></div>
+          <div class="ver"><div class="vtag">V3</div><div class="vbody"><h4>Truss cut-outs + remote <span>21 Oct 2026</span></h4><p>Triangle windows on every flat panel, A1-ready plates, and a hex-styled remote with 2 sticks, a height slider and a speed knob.</p><ul class="pc"><li class="pro">Lighter and looks way cooler</li><li class="pro">Prints with no supports</li><li class="con">Only about 10% lighter in the end, the parts were already thin</li></ul></div></div>
+          <div class="ver current"><div class="vtag">V4</div><div class="vbody"><h4>Inserts, cable slots, build guide <span>24 Oct 2026</span></h4><p>M2 brass inserts where screws get undone, cable slots straight out the end of each servo pocket, and a 3D step-by-step build + wiring guide.</p><ul class="pc"><li class="pro">Screws don't strip the PLA</li><li class="pro">Servo leads come out the way the MG90S actually has them</li><li class="con">Still waiting on parts, firmware not written yet</li></ul></div></div>
+        </div>
+      </section>
+
+      <section class="wide">
+        <h3>One leg, side on <small>sketch I</small></h3>
+        <div class="figure">
+          <div><svg viewBox="0 0 520 330" role="img" aria-label="Side view of one leg: coxa 25 mm, femur 52 mm, tibia 90 mm, body 72 mm above the ground">
+            <defs><marker id="hx-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink)"/></marker></defs>
+            <g filter="url(#rough)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+              <path d="M20 300H500" stroke="var(--ink-soft)" stroke-width="1.6"/>
+              <path d="M30 120H170V170H30" stroke="var(--ink)" stroke-width="2.4"/>
+              <path d="M30 120V80H120" stroke="var(--ink)" stroke-width="2" stroke-dasharray="6 5"/>
+              <rect x="130" y="128" width="34" height="30" fill="var(--blue)" fill-opacity=".25" stroke="var(--blue)" stroke-width="1.8"/>
+              <path d="M150 112V180M150 112H200V196H150" stroke="var(--ink)" stroke-width="2.2"/>
+              <rect x="186" y="128" width="30" height="34" fill="var(--blue)" fill-opacity=".25" stroke="var(--blue)" stroke-width="1.8"/>
+              <path d="M201 140L311 140" stroke="var(--ink)" stroke-width="5"/>
+              <rect x="280" y="126" width="40" height="28" fill="var(--blue)" fill-opacity=".25" stroke="var(--blue)" stroke-width="1.8"/>
+              <path d="M311 140V170Q330 230 316 296" stroke="var(--red)" stroke-width="6"/>
+            </g>
+            <g fill="var(--ink)"><circle cx="150" cy="128" r="4"/><circle cx="201" cy="140" r="4"/><circle cx="311" cy="140" r="4"/></g>
+            <path d="M150 96H201" stroke="var(--ink)" stroke-width="1.2" marker-start="url(#hx-arrow)" marker-end="url(#hx-arrow)"/>
+            <path d="M201 108H311" stroke="var(--ink)" stroke-width="1.2" marker-start="url(#hx-arrow)" marker-end="url(#hx-arrow)"/>
+            <path d="M360 140V300" stroke="var(--ink)" stroke-width="1.2" marker-start="url(#hx-arrow)" marker-end="url(#hx-arrow)"/>
+            <path d="M60 170V300" stroke="var(--ink)" stroke-width="1.2" marker-start="url(#hx-arrow)" marker-end="url(#hx-arrow)"/>
+            <g font-family="Reenie Beanie,cursive" font-size="22">
+              <text x="175" y="90" text-anchor="middle" fill="var(--blue)">coxa 25</text>
+              <text x="256" y="102" text-anchor="middle" fill="var(--blue)">femur 52</text>
+              <text x="368" y="225" fill="var(--red)">tibia 90 (to claw tip)</text>
+              <text x="68" y="245" fill="var(--ink-soft)">body 65–95 above floor</text>
+              <text x="68" y="265" fill="var(--ink-soft)">(the height slider)</text>
+              <text x="36" y="72" fill="var(--ink-soft)">lid + battery</text>
+            </g>
+            <text x="20" y="324" font-family="IM Fell English,serif" font-style="italic" font-size="14" fill="var(--ink-soft)">fig. i: all three servos (blue) at 90°, measurements in mm</text>
+          </svg></div>
+          <div style="display:grid;gap:18px"><p class="scrawl">all servos at 90° = femur level + tibia straight down</p><div class="clip tilt-r"><span style="font-size:.95rem">Joint range: hip ±35°, femur −35° to +75°, knee −55° to +90°. Checked every pose for crashes.</span></div></div>
+        </div>
+      </section>
+
+      <section class="wide">
+        <h3>The tripod walk <small>sketch II</small></h3>
+        <svg viewBox="0 0 640 230" role="img" aria-label="Gait chart: legs 1, 3 and 5 push while 2, 4 and 6 swing, then they swap" style="width:100%;max-width:680px;display:block">
+          <defs><pattern id="hx-hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V7" stroke="var(--ink)" stroke-width="1.6" opacity=".55"/></pattern></defs>
+          <g font-family="Special Elite,monospace" font-size="12" fill="var(--ink)">
+            <text x="10" y="40">L1 front</text><text x="10" y="70">L2 mid</text><text x="10" y="100">L3 rear</text><text x="10" y="130">R4 rear</text><text x="10" y="160">R5 mid</text><text x="10" y="190">R6 front</text>
+          </g>
+          <g stroke="var(--ink)" stroke-width="1.6">
+            <rect x="110" y="28" width="120" height="16" fill="url(#hx-hatch)"/><rect x="350" y="28" width="120" height="16" fill="url(#hx-hatch)"/>
+            <rect x="230" y="58" width="120" height="16" fill="url(#hx-hatch)"/><rect x="470" y="58" width="120" height="16" fill="url(#hx-hatch)"/>
+            <rect x="110" y="88" width="120" height="16" fill="url(#hx-hatch)"/><rect x="350" y="88" width="120" height="16" fill="url(#hx-hatch)"/>
+            <rect x="230" y="118" width="120" height="16" fill="url(#hx-hatch)"/><rect x="470" y="118" width="120" height="16" fill="url(#hx-hatch)"/>
+            <rect x="110" y="148" width="120" height="16" fill="url(#hx-hatch)"/><rect x="350" y="148" width="120" height="16" fill="url(#hx-hatch)"/>
+            <rect x="230" y="178" width="120" height="16" fill="url(#hx-hatch)"/><rect x="470" y="178" width="120" height="16" fill="url(#hx-hatch)"/>
+          </g>
+          <g fill="none" stroke="var(--red)" stroke-width="1.8">
+            <path d="M232 40Q290 18 348 40M472 40Q530 18 588 40"/><path d="M112 70Q170 48 228 70M352 70Q410 48 468 70"/>
+            <path d="M232 100Q290 78 348 100M472 100Q530 78 588 100"/><path d="M112 130Q170 108 228 130M352 130Q410 108 468 130"/>
+            <path d="M232 160Q290 138 348 160M472 160Q530 138 588 160"/><path d="M112 190Q170 168 228 190M352 190Q410 168 468 190"/>
+          </g>
+          <g font-family="Reenie Beanie,cursive" font-size="20"><text x="110" y="220" fill="var(--ink)">▨ foot down, pushing</text><text x="330" y="220" fill="var(--red)">⌒ foot up, swinging</text></g>
+        </svg>
+        <p class="scrawl" style="margin-top:8px">always 3 feet on the floor = never falls over</p>
+      </section>
+
+      <section>
+        <h3>Numbers</h3>
+        <div class="cards">
+          <div class="clip"><span class="k">Size</span><div class="v">34 cm</div><span class="s">foot to foot, 15 cm body</span></div>
+          <div class="clip"><span class="k">Weight</span><div class="v">~700 g</div><span class="s">about 300 g of PLA</span></div>
+          <div class="clip"><span class="k">Speed</span><div class="v">10 cm/s</div><span class="s">0.8 s per step cycle</span></div>
+          <div class="clip"><span class="k">Torque spare</span><div class="v">2.4×</div><span class="s">0.9 needed vs 2.2 kg·cm MG90S</span></div>
+        </div>
+      </section>
+
+      <section>
+        <h3>Brains + power</h3>
+        <div class="wiring">
+          <div class="clip"><h4>Robot</h4><ul class="pins">
+            <li><span>Brain</span><span>ESP32-C3 SuperMini</span></li><li><span>Servos</span><span>2 × PCA9685 (0x40, 0x41)</span></li>
+            <li class="pwr"><span>Battery</span><span>2S 1300 mAh LiPo</span></li><li class="pwr"><span>Servo power</span><span>2 × Mini560 5 V</span></li></ul></div>
+          <div class="clip"><h4>Remote</h4><ul class="pins">
+            <li><span>Brain</span><span>ESP32-DevKitC-32D</span></li><li><span>Sticks</span><span>34/35 · 32/33</span></li>
+            <li><span>Height slider</span><span>GPIO 36</span></li><li class="pwr"><span>Power</span><span>1S → TP4056 → MT3608 5 V</span></li></ul></div>
+        </div>
+      </section>
+
+      <section>
+        <h3>Next up</h3>
+        <ul class="todo">
+          <li><label><input type="checkbox" id="t010-a"><span>Print the servo pocket test coupon and test-fit an MG90S.</span></label></li>
+          <li><label><input type="checkbox" id="t010-b"><span>Print the 5 plates.</span></label></li>
+          <li><label><input type="checkbox" id="t010-c"><span>Write the servo centring sketch, robot firmware and remote firmware.</span></label></li>
+          <li><label><input type="checkbox" id="t010-d"><span>Build it with the 3D guide.</span></label></li>
+          <li><label><input type="checkbox" id="t010-e"><span>First walk!</span></label></li>
+        </ul>
+        <div class="stamp"><b>LiPo</b><span>Charge the robot battery on the IMAX B3 only, never the TP4056.<br>Unplug it when I'm done. Never run it flat.</span></div>
+      </section>
+
+      <div class="foot"><span>— E.</span><span>entry X</span></div>
+    </article>
+
   </main>
   </div>
   <nav class="pager" aria-label="Turn the page"><button type="button" id="prev" data-go="">←</button><button type="button" data-go="contents" id="toContents">Contents</button><button type="button" id="next" data-go="">→</button></nav>
