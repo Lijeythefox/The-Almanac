@@ -267,6 +267,7 @@ p{margin:0 0 12px}
   @keyframes rise{0%{transform:translateY(0);opacity:.9}100%{transform:translateY(-70px);opacity:0}}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.tree{font-family:var(--type);font-size:.9rem;line-height:1.5;margin:0;white-space:pre;overflow-x:auto}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -1068,6 +1069,150 @@ p{margin:0 0 12px}
       </section>
 
       <div class="foot"><span>— E.</span><span>entry IV</span></div>
+    </article>
+
+    <article id="e005" data-no="V" data-title="The Ace" data-sub="Godot RPG, walls and collision" data-date="24 Oct 2026">
+      <div class="dateline"><span>Entry No. 005</span><span>24 October 2026</span><span>Subject: Game design &amp; code</span></div>
+      <h2 class="entry-title">The Ace</h2>
+      <svg class="underline" viewBox="0 0 420 12" aria-hidden="true"><path d="M2 6C100 9 150 4 240 7S360 4 418 7" fill="none" stroke="var(--sepia)" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <p class="lede">A top-down pixel art RPG set in a walled city where every citizen is ranked 1 to 11 like a deck of cards, and the dictator on top calls himself <span class="circled">The Ace</span>. This page is the engine side: getting a player to walk around a room and stop at the walls.</p>
+
+      <section class="versions">
+        <h3>Versions <small>V1 → V2</small></h3>
+        <div class="vlog">
+          <div class="ver"><div class="vtag">V1</div><div class="vbody"><h4>GDevelop prototype</h4><p>The first playable try, built without writing code.</p><ul class="pc"><li class="pro">Quick to get something moving</li><li class="pro">Good for testing the idea</li><li class="con">Too limited to keep building a full RPG on</li></ul></div></div>
+          <div class="ver current"><div class="vtag">V2</div><div class="vbody"><h4>Godot rebuild <span>24 Oct 2026</span></h4><p>Moved to Godot 4.7 (.NET) with the player scripted in C#. A pink rectangle walks around a test room with walls.</p><ul class="pc"><li class="pro">Free, and built for 2D pixel art</li><li class="pro">C# scripts, so the movement and dodge code is mine</li><li class="con">Player is only a placeholder rectangle</li><li class="con">Dodge works but you can't see it yet</li></ul></div></div>
+        </div>
+      </section>
+
+      <div class="part"><span>Part one</span>The room</div>
+
+      <section class="wide">
+        <h3>Walls and collision <small>sketch I</small></h3>
+        <p style="max-width:62ch">The player is a CharacterBody2D that moves with <span class="file">MoveAndSlide()</span>, so it stops against any StaticBody2D with no extra code. The four walls are four rectangle colliders sitting just outside the 320 × 180 room.</p>
+        <div class="sketch"><div style="max-width:700px">
+          <svg viewBox="0 0 700 400" role="img" aria-label="Sketch of the test room: a 320 by 180 floor with four hatched wall colliders just outside it, the player starting in the centre and the camera view as a small dashed box around the player">
+            <defs><pattern id="ace-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="var(--ink)" stroke-width="1.6"/></pattern></defs>
+            <g filter="url(#rough)" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="100" y="50" width="480" height="270" fill="none" stroke="var(--ink-soft)" stroke-width="1.6" stroke-dasharray="6 5"/>
+              <rect x="100" y="26" width="480" height="24" fill="url(#ace-hatch)" stroke="var(--ink)" stroke-width="2.2"/>
+              <rect x="100" y="320" width="480" height="24" fill="url(#ace-hatch)" stroke="var(--ink)" stroke-width="2.2"/>
+              <rect x="76" y="50" width="24" height="270" fill="url(#ace-hatch)" stroke="var(--ink)" stroke-width="2.2"/>
+              <rect x="580" y="50" width="24" height="270" fill="url(#ace-hatch)" stroke="var(--ink)" stroke-width="2.2"/>
+              <rect x="260" y="140" width="160" height="90" fill="none" stroke="var(--blue)" stroke-width="1.8" stroke-dasharray="7 5"/>
+              <rect x="334" y="176" width="12" height="18" fill="var(--red)" fill-opacity=".8" stroke="var(--ink)" stroke-width="1.6"/>
+              <circle cx="100" cy="50" r="4" fill="var(--ink)"/>
+            </g>
+            <g font-family="Reenie Beanie,cursive" font-size="23" fill="var(--ink)">
+              <text x="340" y="18" text-anchor="middle">WallTop  160, −8  ·  320 × 16</text>
+              <text x="340" y="368" text-anchor="middle">WallBottom  160, 188  ·  320 × 16</text>
+              <text x="56" y="185" text-anchor="middle" transform="rotate(-90 56 185)">WallLeft  −8, 90  ·  16 × 180</text>
+              <text x="628" y="185" text-anchor="middle" transform="rotate(90 628 185)">WallRight  328, 90  ·  16 × 180</text>
+              <text x="108" y="74" fill="var(--ink-soft)">0, 0</text>
+              <text x="340" y="304" text-anchor="middle" fill="var(--ink-soft)">the room is 320 × 180</text>
+              <text x="340" y="128" text-anchor="middle" fill="var(--blue)">player starts at 160, 90</text>
+              <text x="340" y="254" text-anchor="middle" fill="var(--blue)">camera sees about 107 × 60 at zoom 3</text>
+            </g>
+            <path d="M340 134V172" fill="none" stroke="var(--blue)" stroke-width="1.5"/>
+            <text x="24" y="392" font-family="IM Fell English,serif" font-style="italic" font-size="15" fill="var(--ink-soft)">fig. i: the test room, to scale</text>
+          </svg>
+        </div></div>
+        <p class="scrawl" style="margin-top:10px">no collision code needed, MoveAndSlide does it</p>
+      </section>
+
+      <section class="wide">
+        <h3>Scene trees <small>what is inside what</small></h3>
+        <div class="wiring" style="max-width:640px">
+          <div class="clip"><h4>TestRoom.tscn</h4>
+<pre class="tree">TestRoom (Node2D)
+├── Walls (StaticBody2D)
+│   ├── WallTop
+│   ├── WallBottom
+│   ├── WallLeft
+│   └── WallRight
+├── ColorRect (floor)
+└── Player</pre>
+          </div>
+          <div class="clip"><h4>Player.tscn</h4>
+<pre class="tree">Player (CharacterBody2D)
+├── ColorRect (pink)
+├── Sprite2D
+├── AnimationPlayer
+├── CollisionShape2D
+└── Camera2D</pre>
+          </div>
+        </div>
+        <p style="margin-top:22px;max-width:62ch">The order in <span class="file">TestRoom</span> matters. Godot draws top to bottom, so the Player has to sit under the floor in the list or it gets drawn behind it.</p>
+      </section>
+
+      <section class="wide">
+        <h3>Settings</h3>
+        <div class="wiring" style="max-width:760px">
+          <div class="clip"><h4>Display</h4>
+            <ul class="pins">
+              <li><span>Viewport</span><span>320 × 180</span></li>
+              <li><span>Stretch mode</span><span>canvas_items</span></li>
+              <li><span>Texture filter</span><span>Nearest</span></li>
+              <li><span>Engine</span><span>Godot 4.7 .NET</span></li>
+            </ul>
+          </div>
+          <div class="clip"><h4>Player</h4>
+            <ul class="pins">
+              <li><span>Hitbox</span><span>capsule r 4, h 10</span></li>
+              <li><span>Placeholder</span><span>8 × 12 at −4, −6</span></li>
+              <li><span>Camera zoom</span><span>3</span></li>
+              <li><span>Smoothing</span><span>off</span></li>
+            </ul>
+          </div>
+          <div class="clip"><h4>Input Map</h4>
+            <ul class="pins">
+              <li><span>move_up / down</span><span>Arrow Up / Down</span></li>
+              <li><span>move_left / right</span><span>Arrow Left / Right</span></li>
+              <li><span>dodge</span><span>X</span></li>
+              <li><span>attack, interact, inventory</span><span>Z, A, C (planned)</span></li>
+            </ul>
+          </div>
+        </div>
+        <p style="margin-top:22px">Files so far: <span class="file">Scenes/Player.tscn</span>, <span class="file">Scenes/TestRoom.tscn</span> and <span class="file">Player.cs</span>.</p>
+      </section>
+
+      <div class="part"><span>Part two</span>Moving</div>
+
+      <section>
+        <h3>The dodge so far</h3>
+        <p>Pressing dodge while moving locks in the direction and swaps the walking speed for a faster one for a moment. It works, but with no animation or effect the player just shifts a little and you can't tell.</p>
+        <div class="cards">
+          <div class="clip"><span class="k">Walk speed</span><div class="v">80 px/s</div><span class="s">normal movement</span></div>
+          <div class="clip"><span class="k">Dodge speed</span><div class="v">160 px/s</div><span class="s">twice as fast</span></div>
+          <div class="clip"><span class="k">Dodge time</span><div class="v">0.2 s</div><span class="s">then back to walking</span></div>
+          <div class="clip"><span class="k">Dodge distance</span><div class="v">32 px</div><span class="s">160 × 0.2, about 10% of the room's width</span></div>
+        </div>
+        <p class="scrawl red" style="margin-top:20px">dodge works but you can't SEE it. come back to it!</p>
+      </section>
+
+      <section class="wide">
+        <h3>What went wrong <small>and the fix</small></h3>
+        <div class="wiring" style="max-width:760px">
+          <div class="clip"><h4>Rubber band</h4><p style="margin:0;font-size:.95rem">An invisible circle stopped me before the edge. Camera position smoothing was lagging behind the player. Turned it off.</p></div>
+          <div class="clip"><h4>Keys did nothing</h4><p style="margin:0;font-size:.95rem">The arrow key binding in the Input Map was broken. Printing the key press to the Output panel showed it. Rebound it.</p></div>
+          <div class="clip"><h4>Invisible player</h4><p style="margin:0;font-size:.95rem">No texture on the Sprite2D, and the player was drawn under the floor. Added a pink ColorRect and moved Player below the floor in the tree.</p></div>
+          <div class="clip"><h4>Walls vanished</h4><p style="margin:0;font-size:.95rem">Dragging nodes around in the scene tree deleted them. Rebuilt the four walls and removed a stray Bone2D that was only causing warnings.</p></div>
+          <div class="clip"><h4>Stuck in a corner?</h4><p style="margin:0;font-size:.95rem">The player may have started at 0, 0 against two walls. Trying the start at 160, 90, the middle of the room. Still testing.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <h3>Next up</h3>
+        <ul class="todo">
+          <li><label><input type="checkbox" id="t005-a"><span>Walk into all four edges and check the player stops at each wall.</span></label></li>
+          <li><label><input type="checkbox" id="t005-b"><span>Give the dodge something to see: a flash or dash trail, plus invincibility frames.</span></label></li>
+          <li><label><input type="checkbox" id="t005-c"><span>Add a basic enemy that patrols.</span></label></li>
+          <li><label><input type="checkbox" id="t005-d"><span>Build the health system so combat can start.</span></label></li>
+          <li><label><input type="checkbox" id="t005-e"><span>Swap the flat floor for a placeholder tilemap.</span></label></li>
+        </ul>
+      </section>
+
+      <div class="foot"><span>— E.</span><span>entry V</span></div>
     </article>
 
     <article id="e008" data-no="VIII" data-title="A.W.A." data-sub="AI With Attitude: a hexapod that talks back" data-date="24 Oct 2026">

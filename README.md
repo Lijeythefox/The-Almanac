@@ -14,6 +14,7 @@ Elijah's project notebook, kept like an explorer's field journal.
 | II | Colour Mixer (V1) | 11 Oct 2026 |
 | III | The Arc Reactor Cell (electrolysis, V3) | 22 Oct 2026 |
 | IV | DUM-E (robot arm + claw, V3) | 24 Oct 2026 |
+| V | The Ace (Godot RPG, V2) | 24 Oct 2026 |
 | VIII | A.W.A. (AI hexapod with attitude, V3) | 24 Oct 2026 |
 
 Each page is a single self-contained HTML file. Open it in a browser, no build step.
