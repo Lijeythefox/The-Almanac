@@ -893,6 +893,183 @@ p{margin:0 0 12px}
       <div class="foot"><span>— E.</span><span>entry III</span></div>
     </article>
 
+    <article id="e004" data-no="IV" data-title="DUM-E" data-sub="6-axis robot arm + 3-finger claw" data-date="24 Oct 2026">
+      <div class="dateline"><span>Entry No. 004</span><span>24 October 2026</span><span>Subject: Robotics &amp; PCBs</span></div>
+      <h2 class="entry-title">DUM-E</h2>
+      <svg class="underline" viewBox="0 0 420 12" aria-hidden="true"><path d="M2 6C80 9 150 4 240 7S360 4 418 7" fill="none" stroke="var(--sepia)" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <p class="lede">Building my own DUM-E, the robot arm from Iron Man's workshop. It's the <span class="circled">LoboCNC WE-R2.4</span>, a six-axis 3D-printed arm, running on my own controller board, with a three-finger claw that closes like DUM-E's.</p>
+
+      <section class="versions">
+        <h3>Versions <small>V1 → V3</small></h3>
+        <div class="vlog">
+          <div class="ver"><div class="vtag">V1</div><div class="vbody"><h4>Stock arm <span>Sep 2026</span></h4><p>The arm exactly as the diy_robotics repo has it: their controller board, their firmware, their gripper.</p><ul class="pc"><li class="pro">Proven design, firmware already works</li><li class="pro">Nothing to design, just print and build</li><li class="con">Slow: capped at 1000 steps/s, about 37 RPM at the motor</li><li class="con">No fuse or protection if the power goes in backwards</li><li class="con">Plain gripper, doesn't look like DUM-E</li></ul></div></div>
+          <div class="ver"><div class="vtag">V2</div><div class="vbody"><h4>My own boards <span>early Oct 2026</span></h4><p>Laid out my own claw board in KiCad and made arm controller v4 with DUM-E graphics on it. Claw went from 2 fingers to 3, each pulled by its own tendon.</p><ul class="pc"><li class="pro">Claw looks like DUM-E's</li><li class="pro">Current sensing on every finger, so it can feel when it's gripping</li><li class="con">Arm board still had no fuse or reverse-polarity protection</li><li class="con">Still running at the stock speed</li></ul></div></div>
+          <div class="ver current"><div class="vtag">V3</div><div class="vbody"><h4>Arm controller v5 + claw board <span>6 Oct 2026</span></h4><p>v5 adds a fuse, reverse-polarity protection, test points and a 36 V motor supply for more speed. Both boards came from JLCPCB with the plugs and tiny chips already soldered. <a class="ink-link" href="https://lijeythefox.github.io/The-Almanac/dume-solder.html" target="_blank" rel="noopener">See the soldering guide →</a></p><ul class="pc"><li class="pro">A backwards plug or a short blows the fuse instead of the drivers</li><li class="pro">Faster: 36 V on the motors, with room to push the speed limits</li><li class="pro">Drivers and ESP32 plug into sockets, so a dead one swaps out in seconds</li><li class="con">Waiting on parts before either board is finished</li><li class="con">Firmware still to write</li></ul></div></div>
+        </div>
+      </section>
+
+      <div class="part"><span>Part one</span>How it all connects</div>
+
+      <section class="wide">
+        <h3>The whole system <small>sketch I</small></h3>
+        <div class="sketch"><div style="max-width:760px"><svg viewBox="0 0 760 400" role="img" aria-label="Sketch: the PC talks over WiFi to the arm controller and the claw board. The arm controller's ESP32 drives six DRV8825 drivers and six steppers and reads six endstops. The claw board's ESP32-C5 drives three N20 motors through two TB6612 chips and measures each finger's current with an INA219.">
+  <defs><marker id="sys-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink)"/></marker></defs>
+  <g filter="url(#rough)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="300" y="20" width="160" height="62" rx="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.2"/>
+    <rect x="40" y="150" width="300" height="200" rx="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4"/>
+    <rect x="420" y="150" width="300" height="200" rx="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4"/>
+    <path d="M340 82L230 146" stroke="var(--blue)" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#sys-arrow)"/>
+    <path d="M420 82L530 146" stroke="var(--blue)" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#sys-arrow)"/>
+    <rect x="60" y="190" width="80" height="60" rx="4" stroke="var(--ink)" stroke-width="1.8"/>
+    <g stroke="var(--ink)" stroke-width="1.6"><rect x="180" y="180" width="40" height="30" rx="3"/><rect x="230" y="180" width="40" height="30" rx="3"/><rect x="280" y="180" width="40" height="30" rx="3"/><rect x="180" y="220" width="40" height="30" rx="3"/><rect x="230" y="220" width="40" height="30" rx="3"/><rect x="280" y="220" width="40" height="30" rx="3"/></g>
+    <path d="M140 220H176" stroke="var(--ink)" stroke-width="1.6" marker-end="url(#sys-arrow)"/>
+    <rect x="440" y="190" width="80" height="60" rx="4" stroke="var(--ink)" stroke-width="1.8"/>
+    <g stroke="var(--ink)" stroke-width="1.6"><rect x="560" y="180" width="60" height="30" rx="3"/><rect x="560" y="220" width="60" height="30" rx="3"/></g>
+    <g stroke="var(--red)" stroke-width="1.6"><rect x="640" y="172" width="60" height="22" rx="3"/><rect x="640" y="204" width="60" height="22" rx="3"/><rect x="640" y="236" width="60" height="22" rx="3"/></g>
+    <path d="M520 220H556" stroke="var(--ink)" stroke-width="1.6" marker-end="url(#sys-arrow)"/>
+    <path d="M620 210H636" stroke="var(--ink)" stroke-width="1.4"/>
+  </g>
+  <g font-family="Special Elite,monospace" font-size="13" fill="var(--ink)">
+    <text x="380" y="48" text-anchor="middle">PC / AI</text><text x="380" y="66" text-anchor="middle" font-size="11" fill="var(--ink-soft)">voice + camera</text>
+    <text x="110" y="140" text-anchor="middle">ARM CONTROLLER v5</text>
+    <text x="660" y="140" text-anchor="middle">CLAW BOARD</text>
+    <text x="100" y="216" text-anchor="middle">ESP32</text><text x="100" y="234" text-anchor="middle" font-size="10">+ OLED</text>
+    <text x="250" y="272" text-anchor="middle" font-size="11">6 × DRV8825</text>
+    <text x="480" y="216" text-anchor="middle">ESP32</text><text x="480" y="234" text-anchor="middle">-C5</text>
+    <text x="590" y="272" text-anchor="middle" font-size="11">2 × TB6612</text>
+    <text x="670" y="272" text-anchor="middle" font-size="11" fill="var(--red)">3 × INA219</text>
+  </g>
+  <g font-family="Reenie Beanie,cursive" font-size="20">
+    <text x="232" y="110" text-anchor="end" fill="var(--blue)">WiFi</text>
+    <text x="528" y="110" fill="var(--blue)">WiFi</text>
+    <text x="60" y="310" fill="var(--ink)">6 steppers, one per joint</text>
+    <text x="60" y="334" fill="var(--ink-soft)">+ 6 endstops to find home</text>
+    <text x="440" y="310" fill="var(--ink)">3 N20 motors wind the tendons</text>
+    <text x="440" y="334" fill="var(--red)">current goes up = it's gripping!</text>
+  </g>
+  <text x="24" y="392" font-family="IM Fell English,serif" font-style="italic" font-size="15" fill="var(--ink-soft)">fig. i: two boards, one brain on the PC</text>
+</svg></div></div>
+      </section>
+
+      <section class="wide">
+        <h3>The claw <small>sketch II</small></h3>
+        <div class="figure">
+          <svg viewBox="0 0 420 320" role="img" aria-label="Sketch of the claw from below: three jointed fingers spaced 120 degrees apart, each with a tendon running back to its own motor and winch drum">
+            <g filter="url(#rough)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="210" cy="160" r="54" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4"/>
+              <circle cx="210" cy="160" r="14" stroke="var(--ink-soft)" stroke-width="1.6"/>
+              <g stroke="var(--ink)" stroke-width="2.2">
+                <path d="M200 106L196 66L204 30L216 30L222 66L220 106"/>
+                <path d="M247 186L290 208L322 236L314 248L278 228L238 204"/>
+                <path d="M173 186L130 208L98 236L106 248L142 228L182 204"/>
+              </g>
+              <g stroke="var(--ink-soft)" stroke-width="1"><path d="M197 68H222M200 48H214"/><path d="M286 214L276 230M305 228L297 242"/><path d="M134 214L144 230M115 228L123 242"/></g>
+              <path d="M210 40V146" stroke="var(--red)" stroke-width="1.6" stroke-dasharray="4 3"/>
+              <path d="M306 238L222 166" stroke="var(--red)" stroke-width="1.6" stroke-dasharray="4 3"/>
+              <path d="M114 238L198 166" stroke="var(--red)" stroke-width="1.6" stroke-dasharray="4 3"/>
+              <path d="M262 150A54 54 0 0 1 252 194" stroke="var(--blue)" stroke-width="1.8"/>
+            </g>
+            <g font-family="Reenie Beanie,cursive" font-size="22">
+              <text x="232" y="40" fill="var(--ink)">finger B</text>
+              <text x="326" y="270" text-anchor="middle" fill="var(--ink)">finger A</text>
+              <text x="94" y="270" text-anchor="middle" fill="var(--ink)">finger C</text>
+              <text x="270" y="140" fill="var(--blue)">120° apart</text>
+              <text x="20" y="120" fill="var(--red)">tendons</text>
+              <path d="M70 118Q130 120 196 150" fill="none" stroke="var(--red)" stroke-width="1.2"/>
+            </g>
+            <text x="12" y="310" font-family="IM Fell English,serif" font-style="italic" font-size="15" fill="var(--ink-soft)">fig. ii: claw, looking up from underneath</text>
+          </svg>
+          <div style="display:grid;gap:18px">
+            <p class="scrawl">motor winds the cord → finger curls. like a real tendon!</p>
+            <div class="clip tilt-r"><span style="font-size:.95rem">When a finger hits something the motor works harder and its current jumps. The INA219 sees that, so the claw knows when to stop squeezing.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h3>Making it fast <small>speed notes</small></h3>
+        <p>The original firmware caps every joint at <b>1000 steps/s</b>, which at 1/8 microstepping is only about 37 RPM at the motor. To go faster:</p>
+        <ol class="steps-list">
+          <li>Run the motors on <b>36 V</b> instead of 24 V. The board is rated for it, and D3 catches the voltage spikes.</li>
+          <li>Heatsinks on all six drivers, and a 5 V fan on the FAN plug.</li>
+          <li>Set each driver's current limit properly: <b>Vref = motor current ÷ 2</b>.</li>
+          <li>Raise the speed and acceleration limits in <span class="file">Configuration.h</span> a bit at a time.</li>
+          <li>Optional: 1/4 microstepping halves the step rate needed for the same speed.</li>
+        </ol>
+        <p class="scrawl red" style="margin-top:14px">faster = louder + less smooth. find the sweet spot</p>
+      </section>
+
+      <div class="part"><span>Part two</span>The boards</div>
+
+      <section class="wide">
+        <h3>What's on each board</h3>
+        <div class="wiring" style="max-width:760px">
+          <div class="clip"><h4>Arm controller v5 · 125 × 125 mm</h4><ul class="pins">
+            <li><span>Brain</span><span>ESP32 DevKitC</span></li>
+            <li><span>Drivers</span><span>6 × DRV8825</span></li>
+            <li><span>Screen</span><span>0.96" OLED</span></li>
+            <li><span>Microstep set</span><span>6 × DIP switch</span></li>
+            <li class="pwr"><span>Motor power</span><span>24–36 V in J9</span></li>
+            <li class="pwr"><span>Logic power</span><span>5 V in J7</span></li>
+            <li><span>Protection</span><span>5 A fuse + IRF4905</span></li></ul></div>
+          <div class="clip"><h4>Claw board · 84 × 52 mm</h4><ul class="pins">
+            <li><span>Brain</span><span>ESP32-C5 (Waveshare)</span></li>
+            <li><span>Motor chips</span><span>2 × TB6612FNG</span></li>
+            <li><span>Grip sensing</span><span>3 × INA219</span></li>
+            <li><span>Shunts</span><span>3 × 0.1 Ω</span></li>
+            <li class="pwr"><span>Power</span><span>5 V in J4</span></li>
+            <li><span>Green LED</span><span>ready (GPIO 25)</span></li>
+            <li><span>Red LED</span><span>fault (GPIO 26)</span></li></ul></div>
+          <div class="clip"><h4>INA219 addresses</h4><ul class="pins">
+            <li><span>U2 · motor A</span><span>0x40</span></li>
+            <li><span>U3 · motor B</span><span>0x41</span></li>
+            <li><span>U4 · motor C</span><span>0x44</span></li></ul></div>
+        </div>
+        <p style="margin-top:22px;max-width:62ch">JLCPCB soldered all the JST plugs on both boards, plus the tiny TB6612 and INA219 chips on the claw board. Everything else I'm soldering by hand, shortest parts first.</p>
+      </section>
+
+      <section>
+        <h3>Soldering progress</h3>
+        <p><b>Done:</b> on the arm board, the resistors (except R11), D4, the ceramic caps, LEDs and electrolytics. On the claw board, R1–R4, the ceramic caps, both LEDs, the test points, the ESP32-C5 socket, C1 and C5.</p>
+        <div class="clip tilt-l" style="margin-top:24px;max-width:460px">
+          <h4 style="margin:0 0 6px;font-family:var(--type);font-weight:400;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)">Still to buy</h4>
+          <ul class="pins">
+            <li><span>3 × screw terminal</span><span>arm, 5 mm</span></li>
+            <li><span>6 × 4-way DIP switch</span><span>arm</span></li>
+            <li><span>P6KE43A TVS diode</span><span>arm D3</span></li>
+            <li><span>5 A TR5 fuse</span><span>arm F1</span></li>
+            <li><span>IRF4905 MOSFET</span><span>arm Q1</span></li>
+            <li><span>More female headers</span><span>arm</span></li>
+            <li><span>3 × 0.1 Ω 1 W resistor</span><span>claw R5–R7</span></li>
+            <li><span>10 µF electrolytic</span><span>claw C2</span></li>
+            <li><span>1 × screw terminal</span><span>claw, 5.08 mm</span></li>
+          </ul>
+        </div>
+        <ul class="todo" style="margin-top:26px">
+          <li><label><input type="checkbox" id="t004-a"><span>Arm: solder R11 standing up (hairpin the top leg).</span></label></li>
+          <li><label><input type="checkbox" id="t004-b"><span>Arm: fit the ESP32 and OLED headers first, then test the screen over USB.</span></label></li>
+          <li><label><input type="checkbox" id="t004-c"><span>Arm: D3, DIP switches, driver headers, F1, Q1, screw terminals when the parts arrive.</span></label></li>
+          <li><label><input type="checkbox" id="t004-d"><span>Claw: test the LEDs and that all three INA219s show up on I2C over USB.</span></label></li>
+          <li><label><input type="checkbox" id="t004-e"><span>Claw: R5–R7, C2 and J4 when the parts arrive.</span></label></li>
+          <li><label><input type="checkbox" id="t004-f"><span>Set every driver's Vref before plugging in a motor.</span></label></li>
+          <li><label><input type="checkbox" id="t004-g"><span>Write the firmware: arm first, then the claw's grip logic.</span></label></li>
+        </ul>
+        <div class="stamp"><b>Careful</b><span>Never plug or unplug a motor with the power on. It kills DRV8825s instantly.<br>Arm J7 is backwards to J9: GND is the square pad.<br>Check every electrolytic: long leg in the square pad.</span></div>
+      </section>
+
+      <section>
+        <h3>Later on</h3>
+        <ul class="notes">
+          <li>Camera on the arm, microphone, and a small AI model so I can tell it what to do</li>
+          <li>Little speaker for beeps, boops and whirrs when it answers</li>
+          <li>Endstop mounts and the claw's winch drums still to design</li>
+        </ul>
+        <p class="scrawl" style="margin-top:14px">DUM-E needs a fire extinguisher too obviously</p>
+      </section>
+
+      <div class="foot"><span>— E.</span><span>entry IV</span></div>
+    </article>
+
   </main>
   </div>
   <nav class="pager" aria-label="Turn the page"><button type="button" id="prev" data-go="">←</button><button type="button" data-go="contents" id="toContents">Contents</button><button type="button" id="next" data-go="">→</button></nav>

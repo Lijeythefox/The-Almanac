@@ -4,6 +4,7 @@ Elijah's project notebook, kept like an explorer's field journal.
 
 - **The Almanac:** https://lijeythefox.github.io/The-Almanac/
 - **Arc Reactor Cell (3D model):** https://lijeythefox.github.io/The-Almanac/reactor.html
+- **DUM-E Soldering Guide:** https://lijeythefox.github.io/The-Almanac/dume-solder.html
 
 ## Entries
 
@@ -12,6 +13,7 @@ Elijah's project notebook, kept like an explorer's field journal.
 | I | Mini Radar (V2) | 11 Oct 2026 |
 | II | Colour Mixer (V1) | 11 Oct 2026 |
 | III | The Arc Reactor Cell (electrolysis, V3) | 22 Oct 2026 |
+| IV | DUM-E (robot arm + claw, V3) | 24 Oct 2026 |
 
 Each page is a single self-contained HTML file. Open it in a browser, no build step.
 
