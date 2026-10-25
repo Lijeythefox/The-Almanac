@@ -18,7 +18,7 @@ Elijah's project notebook, kept like an explorer's field journal.
 | V | The Ace (Godot RPG, V2) | 24 Oct 2026 |
 | VI | NEXUS Cyberdeck (V4) | 19 Oct 2026 |
 | VII | Cursor Control System + I.R.I.S. (V4) | 24 Oct 2026 |
-| VIII | A.W.A. (AI hexapod with attitude, V3) | 24 Oct 2026 |
+| VIII | A.W.A. (AI tank with attitude, V4) | 24 Oct 2026 |
 | X | MG90S Hexapod (V4) | 24 Oct 2026 |
 
 Each page is a single self-contained HTML file. Open it in a browser, no build step.
