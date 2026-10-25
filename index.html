@@ -1465,6 +1465,322 @@ p{margin:0 0 12px}
       <div class="foot"><span>— E.</span><span>entry VI</span></div>
     </article>
 
+    <article id="e007" data-no="VII" data-title="Cursor Control System" data-sub="Hand-tracked mouse + I.R.I.S." data-date="24 Oct 2026">
+      <div class="dateline"><span>Entry No. 007</span><span>24 October 2026</span><span>Subject: Software &amp; vision</span></div>
+      <h2 class="entry-title">Cursor Control System</h2>
+      <svg class="underline" viewBox="0 0 420 12" aria-hidden="true"><path d="M2 8C90 4 170 9 250 6S370 3 418 7" fill="none" stroke="var(--sepia)" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <p class="lede">Control the computer by waving at it, like Tony Stark. A webcam watches my hand, the cursor follows my palm, and pinching my fingers to my thumb <span class="circled">clicks the real mouse</span>. Built it so I can make stuff in TinkerCAD on the projector without touching anything.</p>
+
+      <section class="versions">
+        <h3>Versions <small>V1 → V4</small></h3>
+        <div class="vlog">
+          <div class="ver"><div class="vtag">V1</div><div class="vbody"><h4>Iris in a terminal <span>Aug 2026</span></h4><p>Python script: mic records 5 seconds, Whisper turns it into text, Llama 3.1 on my 4060 answers.</p><ul class="pc"><li class="pro">Runs 100% on my own PC, no internet</li><li class="pro">Understood me first try</li><li class="con">No screen at all, just text in a terminal</li><li class="con">Fixed 5 second recording, press Enter every time</li></ul></div></div>
+          <div class="ver"><div class="vtag">V2</div><div class="vbody"><h4>I.R.I.S. shell <span>Aug 2026</span></h4><p>Electron app with a radial app launcher, always-listening voice, Piper talking back, and a palm cursor where a pinch "grabs".</p><ul class="pc"><li class="pro">Looks like a real JARVIS screen</li><li class="pro">Talks back in a British voice (cori)</li><li class="con">Hand cursor only works inside its own window</li><li class="con">Voice broke after packaging until I turned asar off</li></ul></div></div>
+          <div class="ver"><div class="vtag">V3</div><div class="vbody"><h4>Gesture mouse <span>Aug 2026</span></h4><p>Separate app that moves the REAL mouse with nut-js. Index, middle and ring pinches are left, middle and right click. Scroll by moving the hand closer or further.</p><ul class="pc"><li class="pro">Works in any app, including TinkerCAD</li><li class="pro">Installer I can send to people</li><li class="con">Jitter fired loads of clicks in a row</li><li class="con">Stopped tracking when I clicked off it, scroll was jumpy</li></ul></div></div>
+          <div class="ver current"><div class="vtag">V4</div><div class="vbody"><h4>Cursor Control System <span>Sep 2026</span></h4><p>Press-and-hold clicks, smoothing, two-line pinch thresholds, no scroll. Runs on the Optiplex SFF with Linux Mint, aimed at the projector.</p><ul class="pc"><li class="pro">Steady cursor, clicks once, can drag in TinkerCAD</li><li class="pro">Buttons can't get stuck down any more</li><li class="con">Linux needs X11 (not Wayland) for mouse control</li><li class="con">MediaPipe model downloads from the internet when it starts</li></ul></div></div>
+        </div>
+      </section>
+
+      <div class="part"><span>Part one</span>The rig</div>
+
+      <section class="wide">
+        <h3>The setup <small>sketch I</small></h3>
+        <div class="figure">
+          <div>
+            <svg viewBox="0 0 660 330" role="img" aria-label="Sketch of the rig: a projector on a stand throws the TinkerCAD screen onto the wall behind it, the Optiplex PC beside it has a webcam on top aimed at the person standing in front, who moves their hand in the air">
+              <defs><marker id="ccs-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink)"/></marker></defs>
+              <g filter="url(#rough)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M30 40V290" stroke="var(--ink)" stroke-width="3"/>
+                <path d="M34 70L36 260" stroke="var(--blue)" stroke-width="6" opacity=".25"/>
+                <path d="M228 152L38 72M228 176L38 258" stroke="var(--blue)" stroke-width="1.6" stroke-dasharray="6 5"/>
+                <rect x="226" y="140" width="96" height="44" rx="5" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.2"/>
+                <circle cx="234" cy="162" r="9" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+                <path d="M214 194H334M232 194V292M316 194V292" stroke="var(--ink)" stroke-width="2.4"/>
+                <rect x="372" y="150" width="46" height="142" rx="4" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.2"/>
+                <path d="M382 170H408M382 182H408" stroke="var(--ink-soft)" stroke-width="1.4"/>
+                <rect x="379" y="128" width="32" height="14" rx="5" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+                <path d="M395 142V150" stroke="var(--ink)" stroke-width="2"/>
+                <path d="M420 135H520" stroke="var(--red)" stroke-width="1.8" stroke-dasharray="6 5" marker-end="url(#ccs-arrow)"/>
+                <circle cx="580" cy="118" r="20" stroke="var(--ink)" stroke-width="2.2"/>
+                <path d="M580 138V220M580 220L556 290M580 220L602 290M580 162L548 196M580 160L612 132L622 98" stroke="var(--ink)" stroke-width="2.4"/>
+                <path d="M614 96L612 84M620 94L622 82M626 96L630 86" stroke="var(--ink)" stroke-width="1.8"/>
+                <path d="M18 292H650" stroke="var(--ink-soft)" stroke-width="1.6"/>
+              </g>
+              <g font-family="Special Elite,monospace" font-size="12" fill="var(--ink)">
+                <text x="274" y="214" text-anchor="middle">Sanyo XU300</text>
+                <text x="395" y="312" text-anchor="middle">Optiplex 3060</text>
+                <text x="395" y="122" text-anchor="middle" font-size="11">webcam</text>
+              </g>
+              <g font-family="Reenie Beanie,cursive" font-size="23">
+                <text x="48" y="130" fill="var(--blue)">TinkerCAD</text>
+                <text x="48" y="152" fill="var(--blue)">on the wall</text>
+                <text x="430" y="122" fill="var(--red)">watches my hand</text>
+                <text x="482" y="58" fill="var(--ink-soft)">hand in the air,</text>
+                <text x="482" y="80" fill="var(--ink-soft)">no mat, no screen</text>
+              </g>
+              <text x="640" y="322" text-anchor="end" font-family="IM Fell English,serif" font-style="italic" font-size="15" fill="var(--ink-soft)">fig. i: projector, PC, me</text>
+            </svg>
+          </div>
+          <div style="display:grid;gap:20px">
+            <p class="scrawl">started as a "HoloMat" on the desk, ended up just aiming at me!</p>
+            <div class="clip tilt-r"><span style="font-size:.95rem">Projector is an old school one: 3,000 lumens, so it's bright even with the lights on. Only has VGA, so it needs an active HDMI-to-VGA cable.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="wide">
+        <h3>How it works <small>sketch II</small></h3>
+        <div class="sketch"><div style="max-width:760px">
+          <svg viewBox="0 0 760 170" role="img" aria-label="Pipeline: webcam frames go into MediaPipe, which finds 21 points on the hand; gesture logic turns those into a cursor position and pinches; nut-js moves and clicks the real mouse; TinkerCAD sees normal mouse input">
+            <defs><marker id="ccs-arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink)"/></marker></defs>
+            <g filter="url(#rough)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="10" y="40" width="118" height="64" rx="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.2"/>
+              <rect x="168" y="40" width="118" height="64" rx="6" fill="var(--paper)" stroke="var(--blue)" stroke-width="2.2"/>
+              <rect x="326" y="40" width="118" height="64" rx="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.2"/>
+              <rect x="484" y="40" width="118" height="64" rx="6" fill="var(--paper)" stroke="var(--red)" stroke-width="2.2"/>
+              <rect x="642" y="40" width="108" height="64" rx="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.2"/>
+              <path d="M130 72H162M288 72H320M446 72H478M604 72H636" stroke="var(--ink)" stroke-width="1.8" marker-end="url(#ccs-arrow2)"/>
+            </g>
+            <g font-family="Special Elite,monospace" font-size="13" fill="var(--ink)" text-anchor="middle">
+              <text x="69" y="77">Webcam</text>
+              <text x="227" y="77" fill="var(--blue)">MediaPipe</text>
+              <text x="385" y="70">Gesture</text><text x="385" y="86">logic</text>
+              <text x="543" y="77" fill="var(--red)">nut-js</text>
+              <text x="696" y="77">TinkerCAD</text>
+            </g>
+            <g font-family="Reenie Beanie,cursive" font-size="18" fill="var(--ink-soft)" text-anchor="middle">
+              <text x="69" y="132">30+ frames a sec</text>
+              <text x="227" y="132">21 points per hand</text>
+              <text x="385" y="132">palm + pinches</text>
+              <text x="543" y="132">moves the real mouse</text>
+              <text x="696" y="132">just sees a mouse</text>
+            </g>
+            <text x="10" y="22" font-family="IM Fell English,serif" font-style="italic" font-size="15" fill="var(--ink-soft)">fig. ii: camera in, clicks out (all on the PC, nothing in the cloud)</text>
+          </svg>
+        </div></div>
+      </section>
+
+      <section class="wide">
+        <h3>The gestures <small>sketch III</small></h3>
+        <div class="figure">
+          <div>
+            <svg viewBox="0 0 620 400" role="img" aria-label="Hand skeleton with MediaPipe's 21 points. The cursor sits at the average of the wrist and the four knuckles. Thumb tip to index tip is left click, thumb to middle is middle click, thumb to ring is right click">
+              <g filter="url(#rough)" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke="var(--ink)" stroke-width="2.2">
+                <path d="M170 340L125 308L95 268L78 232L66 198"/>
+                <path d="M170 340L140 214L132 162L128 128L125 96"/>
+                <path d="M140 214L175 204L176 148L177 110L178 74"/>
+                <path d="M175 204L208 212L215 162L219 128L222 98"/>
+                <path d="M208 212L236 228L250 190L258 166L264 140"/>
+                <path d="M170 340L236 228"/>
+              </g>
+              <path d="M170 340L140 214L175 204L208 212L236 228Z" fill="var(--sepia)" fill-opacity=".08" stroke="var(--sepia)" stroke-width="1.2" stroke-dasharray="4 4"/>
+              <g fill="var(--ink)">
+                <circle cx="170" cy="340" r="4.5"/><circle cx="125" cy="308" r="3.5"/><circle cx="95" cy="268" r="3.5"/><circle cx="78" cy="232" r="3.5"/>
+                <circle cx="140" cy="214" r="4.5"/><circle cx="132" cy="162" r="3.5"/><circle cx="128" cy="128" r="3.5"/>
+                <circle cx="175" cy="204" r="4.5"/><circle cx="176" cy="148" r="3.5"/><circle cx="177" cy="110" r="3.5"/>
+                <circle cx="208" cy="212" r="4.5"/><circle cx="215" cy="162" r="3.5"/><circle cx="219" cy="128" r="3.5"/>
+                <circle cx="236" cy="228" r="4.5"/><circle cx="250" cy="190" r="3.5"/><circle cx="258" cy="166" r="3.5"/><circle cx="264" cy="140" r="3.5"/>
+              </g>
+              <circle cx="66" cy="198" r="7" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4"/>
+              <circle cx="125" cy="96" r="7" fill="var(--blue)" fill-opacity=".35" stroke="var(--blue)" stroke-width="2.4"/>
+              <circle cx="178" cy="74" r="7" fill="#7a5a12" fill-opacity=".3" stroke="#7a5a12" stroke-width="2.4"/>
+              <circle cx="222" cy="98" r="7" fill="var(--red)" fill-opacity=".3" stroke="var(--red)" stroke-width="2.4"/>
+              <circle cx="186" cy="236" r="12" fill="none" stroke="var(--red)" stroke-width="2.2"/>
+              <path d="M186 218V254M168 236H204" stroke="var(--red)" stroke-width="1.6"/>
+              <g fill="none" stroke-width="1.3">
+                <path d="M72 196Q96 150 118 100" stroke="var(--blue)" stroke-dasharray="4 4"/>
+                <path d="M300 236H200" stroke="var(--red)"/>
+                <path d="M300 96H134" stroke="var(--blue)"/>
+                <path d="M300 60H190Q182 62 180 68" stroke="#7a5a12"/>
+                <path d="M300 130H232Q224 126 224 108" stroke="var(--red)"/>
+                <path d="M300 198H76" stroke="var(--ink-soft)"/>
+              </g>
+              <g font-family="Special Elite,monospace" font-size="13">
+                <text x="308" y="64" fill="#7a5a12">12 middle tip + thumb</text>
+                <text x="308" y="100" fill="var(--blue)">8 index tip + thumb</text>
+                <text x="308" y="134" fill="var(--red)">16 ring tip + thumb</text>
+                <text x="308" y="202" fill="var(--ink)">4 thumb tip</text>
+                <text x="308" y="240" fill="var(--red)">⊕ cursor</text>
+              </g>
+              <g font-family="Reenie Beanie,cursive" font-size="23">
+                <text x="476" y="64" fill="#7a5a12">= middle click</text>
+                <text x="476" y="100" fill="var(--blue)">= left click</text>
+                <text x="476" y="134" fill="var(--red)">= right click</text>
+                <text x="308" y="266" fill="var(--ink-soft)">average of the wrist + 4 knuckles</text>
+                <text x="308" y="288" fill="var(--ink-soft)">(the shaded bit) so pinching</text>
+                <text x="308" y="310" fill="var(--ink-soft)">doesn't drag the cursor around</text>
+              </g>
+              <text x="20" y="390" font-family="IM Fell English,serif" font-style="italic" font-size="15" fill="var(--ink-soft)">fig. iii: 21 points, 3 pinches, 1 palm</text>
+            </svg>
+          </div>
+          <div style="display:grid;gap:20px">
+            <div class="clip tilt-l"><span style="font-size:.95rem">Ring finger is the hardest one. It shares tendons with the middle finger, so it drags the middle one in too. Fix: only the CLOSEST pinch counts, and only one at a time.</span></div>
+            <p class="scrawl red">took scroll OUT in V4. one webcam can't judge depth well enough</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="wide">
+        <h3>Fixing the jitter <small>sketch IV</small></h3>
+        <p style="max-width:62ch">V3 had one line: pinch closer than it = click. But the tracking wobbles a tiny bit every frame, so when my fingers sat near the line it crossed it over and over and fired a whole burst of clicks. Right click opened the menu then instantly clicked in it, so it looked broken.</p>
+        <div class="sketch"><div style="max-width:760px">
+          <svg viewBox="0 0 700 300" role="img" aria-label="Graph of pinch distance over time. A wobbly raw line crosses a single threshold many times. The smoothed line only grabs below 0.055 and only lets go above 0.08, so it clicks once">
+            <g filter="url(#rough)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M60 30V250H680" stroke="var(--ink)" stroke-width="2.2"/>
+              <rect x="300" y="150" width="210" height="100" fill="var(--red)" fill-opacity=".07" stroke="none"/>
+            </g>
+            <path d="M60 165H680" stroke="var(--blue)" stroke-width="1.6" stroke-dasharray="8 5"/>
+            <path d="M60 120H680" stroke="var(--red)" stroke-width="1.6" stroke-dasharray="8 5"/>
+            <path d="M62 60C110 64 150 90 190 128S230 150 240 158L246 168L252 152L258 172L264 156L270 174L278 158L286 178L292 166L300 186L310 200L330 208L360 214L400 212L430 206L460 196L480 180L494 166L500 158L506 170L512 150L518 166L526 136L540 112L580 84L640 70L676 66" fill="none" stroke="var(--ink-soft)" stroke-width="1.3" opacity=".7"/>
+            <path d="M62 60C120 66 170 100 220 140S280 178 310 196S380 214 420 206S480 186 500 168S530 132 560 104S640 72 676 68" fill="none" stroke="var(--ink)" stroke-width="2.8"/>
+            <g fill="var(--red)">
+              <circle cx="246" cy="168" r="3"/><circle cx="258" cy="172" r="3"/><circle cx="270" cy="174" r="3"/><circle cx="286" cy="178" r="3"/>
+            </g>
+            <circle cx="300" cy="186" r="7" fill="var(--paper)" stroke="var(--blue)" stroke-width="2.4"/>
+            <circle cx="530" cy="120" r="7" fill="var(--paper)" stroke="var(--red)" stroke-width="2.4"/>
+            <g font-family="Special Elite,monospace" font-size="12">
+              <text x="54" y="169" text-anchor="end" fill="var(--blue)">0.055</text>
+              <text x="54" y="124" text-anchor="end" fill="var(--red)">0.08</text>
+              <text x="54" y="40" text-anchor="end" fill="var(--ink-soft)">far</text>
+              <text x="54" y="250" text-anchor="end" fill="var(--ink-soft)">touch</text>
+              <text x="680" y="270" text-anchor="end" fill="var(--ink-soft)">time →</text>
+            </g>
+            <g font-family="Reenie Beanie,cursive" font-size="22">
+              <text x="150" y="236" fill="var(--blue)">press down here</text>
+              <text x="540" y="148" fill="var(--red)">let go only up here</text>
+              <text x="390" y="240" fill="var(--red)">HELD (can drag)</text>
+              <text x="200" y="108" fill="var(--ink-soft)">raw = wobbly</text>
+              <text x="88" y="48" fill="var(--ink)">smoothed</text>
+              <text x="80" y="200" fill="var(--red)" font-size="19">old way: click click click</text>
+            </g>
+            <text x="690" y="292" text-anchor="end" font-family="IM Fell English,serif" font-style="italic" font-size="15" fill="var(--ink-soft)">fig. iv: two lines instead of one</text>
+          </svg>
+        </div></div>
+        <div class="cards" style="max-width:760px">
+          <div class="clip"><span class="k">Grab below</span><div class="v">0.055</div><span class="s">thumb-to-tip distance, as a share of the frame</span></div>
+          <div class="clip"><span class="k">Let go above</span><div class="v">0.08</div><span class="s">the gap in between stops the flicker</span></div>
+          <div class="clip"><span class="k">Cursor smoothing</span><div class="v">35%</div><span class="s">moves 35% of the way to the new spot each frame</span></div>
+          <div class="clip"><span class="k">Confidence</span><div class="v">0.7</div><span class="s">ignores hands it's not sure about</span></div>
+        </div>
+      </section>
+
+      <section>
+        <h3>Bugs I hit <small>and the fixes</small></h3>
+        <div class="clip tilt-r" style="margin-top:20px;max-width:640px">
+          <ul class="pins">
+            <li><span><b>Problem</b></span><span style="color:var(--ink-soft)">fix</span></li>
+            <li><span>Burst of clicks from jitter</span><span>press + hold, two thresholds</span></li>
+            <li><span>Stopped when I clicked TinkerCAD</span><span>backgroundThrottling: false</span></li>
+            <li><span>Button stuck down if hand left frame</span><span>release on every exit</span></li>
+            <li><span>Two pinches at once</span><span>closest one only</span></li>
+            <li><span>Voice dead after npm run dist</span><span>"asar": false</span></li>
+            <li><span>windows-build-tools crashed</span><span>VS Build Tools (C++) instead</span></li>
+            <li><span>apt "not valid yet" errors</span><span>clock was 9 days behind</span></li>
+            <li><span>electron.exe syntax error on Linux</span><span>delete node_modules, reinstall</span></li>
+          </ul>
+        </div>
+      </section>
+
+      <section>
+        <h3>Windows → Linux Mint</h3>
+        <p>The Optiplex was meant to run Windows 10, but every install got stuck on a login screen for the <b>last owner's account</b>. Wiped the drive, reset the BIOS, still came back mid-install. So I put <span class="circled">Linux Mint Cinnamon</span> on it instead.</p>
+        <p class="clip tilt-l" style="margin-top:24px;max-width:50ch">Lucky actually: the mouse control (nut-js) needs <b>X11</b>, and Mint still uses X11 by default. Ubuntu and Fedora use Wayland now, which blocks apps from moving the mouse. Check with <span class="file">echo $XDG_SESSION_TYPE</span>, should say x11.</p>
+      </section>
+
+      <section>
+        <h3>Parts</h3>
+        <ul class="parts">
+          <li>Dell Optiplex 3060 SFF <i>(was the Plex server)</i></li>
+          <li>Linux Mint Cinnamon <i>(X11)</i></li>
+          <li>Sanyo PLC-XU300 projector <i>(3,000 lm, 1024×768, VGA only)</i></li>
+          <li>Active HDMI-to-VGA cable <i>(powered off the HDMI port)</i></li>
+          <li>Webcam on top of the PC, aimed at where I stand</li>
+          <li>Electron <i>(the app window)</i></li>
+          <li>MediaPipe Hand Landmarker <i>(21 points)</i></li>
+          <li>nut-js <i>(moves + clicks the real mouse)</i></li>
+          <li>build-essential + libxtst-dev <i>(so nut-js compiles on Linux)</i></li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Run it</h3>
+        <ol class="steps-list">
+          <li>Copy the project folder over, but NOT <span class="file">node_modules</span>.</li>
+          <li><span class="file">npm install</span>, then <span class="file">npm start</span> to test.</li>
+          <li>Hit <b>START</b>, let it see my hand, try each pinch on the desktop first.</li>
+          <li><span class="file">npm run dist</span> makes the installer (.exe on Windows, AppImage on Linux).</li>
+        </ol>
+      </section>
+
+      <div class="part"><span>Part two</span>Where it came from: I.R.I.S.</div>
+
+      <section class="wide">
+        <h3>I.R.I.S. <small>sketch V</small></h3>
+        <div class="figure">
+          <div>
+            <svg viewBox="0 0 520 360" role="img" aria-label="The I.R.I.S. radial launcher: a core circle in the middle with eight app slots around it on spokes, each saying grab to customise until an app is picked">
+              <g filter="url(#rough)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="260" cy="180" r="140" stroke="var(--ink-soft)" stroke-width="1.2" stroke-dasharray="3 6"/>
+                <path d="M260 135V68M292 148L339 101M305 180H372M292 212L339 259M260 225V292M228 212L181 259M215 180H148M228 148L181 101" stroke="var(--ink-soft)" stroke-width="1.6"/>
+                <circle cx="260" cy="180" r="44" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.6"/>
+                <circle cx="260" cy="180" r="34" stroke="var(--sepia)" stroke-width="1.2" stroke-dasharray="5 4"/>
+                <circle cx="260" cy="44" r="24" fill="var(--paper)" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4"/>
+                <circle cx="356" cy="84" r="24" fill="var(--paper)" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4"/>
+                <circle cx="396" cy="180" r="24" fill="var(--paper)" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4"/>
+                <circle cx="356" cy="276" r="24" fill="var(--paper)" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4"/>
+                <circle cx="260" cy="316" r="24" fill="var(--paper)" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4"/>
+                <circle cx="164" cy="276" r="24" fill="var(--paper)" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4"/>
+                <circle cx="124" cy="180" r="24" fill="var(--paper)" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4"/>
+                <circle cx="164" cy="84" r="24" fill="var(--paper)" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4"/>
+              </g>
+              <g font-family="Special Elite,monospace" font-size="11" fill="var(--ink)" text-anchor="middle">
+                <text x="260" y="184" font-size="13">I.R.I.S.</text>
+                <text x="260" y="48">APP 1</text>
+                <text x="124" y="184">APP 7</text>
+                <text x="356" y="88">APP 2</text><text x="396" y="184">APP 3</text><text x="356" y="280">APP 4</text>
+                <text x="260" y="320">APP 5</text><text x="164" y="280">APP 6</text><text x="164" y="88">APP 8</text>
+              </g>
+              <g font-family="Reenie Beanie,cursive" font-size="21">
+                <text x="420" y="60" fill="var(--blue)">grab to</text>
+                <text x="420" y="80" fill="var(--blue)">customise</text>
+                <text x="12" y="250" fill="var(--ink-soft)">pick from my</text>
+                <text x="12" y="270" fill="var(--ink-soft)">installed apps</text>
+              </g>
+              <text x="510" y="352" text-anchor="end" font-family="IM Fell English,serif" font-style="italic" font-size="15" fill="var(--ink-soft)">fig. v: the radial launcher</text>
+            </svg>
+          </div>
+          <div style="display:grid;gap:20px">
+            <p class="scrawl">Intelligent Reactive Interface System</p>
+            <div class="clip tilt-r"><span style="font-size:.95rem">Everything says GRAB instead of click, because you use it with your hand.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h3>Iris's brain</h3>
+        <div class="cards">
+          <div class="clip"><span class="k">Thinks with</span><div class="v">Llama 3.1</div><span class="s">8B, on my RTX 4060 through Ollama</span></div>
+          <div class="clip"><span class="k">Hears with</span><div class="v">Whisper</div><span class="s">faster-whisper "base", on the CPU</span></div>
+          <div class="clip"><span class="k">Talks with</span><div class="v">Piper</div><span class="s">en_GB-cori-high voice, British</span></div>
+          <div class="clip"><span class="k">Internet</span><div class="v">None</div><span class="s">all of it runs on my PC</span></div>
+        </div>
+        <p style="margin-top:22px">Always listening: it waits for my voice to get loud enough, records until I stop for about a second, then answers out loud. It ignores the mic while it's talking so it doesn't answer itself. Push to Talk is in the settings if I don't want that.</p>
+      </section>
+
+      <section>
+        <h3>Next</h3>
+        <ul class="todo">
+          <li><label><input type="checkbox" id="t007-a"><span>Restyle the Iris HUD in amber (reference image saved in the project folder).</span></label></li>
+          <li><label><input type="checkbox" id="t007-b"><span>Bundle the MediaPipe files inside the app so it works offline.</span></label></li>
+          <li><label><input type="checkbox" id="t007-c"><span>Try hand tracking from scratch with plain OpenCV: skin colour + convex hull.</span></label></li>
+          <li><label><input type="checkbox" id="t007-d"><span>Tune cursor sensitivity so a small hand move covers the whole wall.</span></label></li>
+          <li><label><input type="checkbox" id="t007-e"><span>Sync a NeoPixel ring to Iris (blue idle, amber thinking, green talking).</span></label></li>
+        </ul>
+      </section>
+
+      <div class="foot"><span>— E.</span><span>entry VII</span></div>
+    </article>
+
     <article id="e008" data-no="VIII" data-title="A.W.A." data-sub="AI With Attitude: a hexapod that talks back" data-date="24 Oct 2026">
       <div class="dateline"><span>Entry No. 008</span><span>24 October 2026</span><span>Subject: Robotics &amp; AI</span></div>
       <h2 class="entry-title">A.W.A.</h2>
