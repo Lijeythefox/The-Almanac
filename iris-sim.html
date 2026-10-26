@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Iris HUD Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: the camera fills the screen as "the world"; the 128x64 transparent OLED floats near the top like the flipped-down eyepiece; a control deck docks at the bottom. One dark look on purpose. */
+:root{
+  color-scheme:dark;
+  --void:#05080c;
+  --deck:rgba(7,12,17,.88);
+  --line:rgba(127,220,255,.2);
+  --ice:#7fdcff;
+  --ink:#dbe8f0;
+  --dim:#8197a5;
+  --shell:#d9473c;
+  --ui:"Chakra Petch","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--void);color:var(--ink);font-family:var(--ui);overflow:hidden;-webkit-tap-highlight-color:transparent}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ice);outline-offset:2px}
+
+.stage{position:fixed;inset:0;overflow:hidden;background:radial-gradient(ellipse at 50% 35%,#13212b,var(--void) 70%)}
+#cam{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#cam.mirror{transform:scaleX(-1)}
+#world{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#tap{position:absolute;inset:0;touch-action:manipulation}
+
+.top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;gap:12px;pointer-events:none;
+  padding:calc(env(safe-area-inset-top,0px) + 12px) max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px))}
+.brand{font-weight:700;letter-spacing:.16em;text-transform:uppercase;font-size:.78rem;text-shadow:0 1px 8px #000}
+.brand b{color:var(--shell)}
+.live{font-family:var(--mono);font-size:.7rem;color:var(--dim);text-shadow:0 1px 6px #000}
+
+.eye{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + 13%);width:min(88vw,520px);aspect-ratio:2/1;
+  transform:translateX(-50%);transform-origin:50% -40%;transition:transform .5s cubic-bezier(.3,.7,.2,1),opacity .5s;pointer-events:none}
+.eye.up{transform:translateX(-50%) translateY(-118%) rotateX(68deg);opacity:.35}
+.glass{position:absolute;inset:0;border:1px solid rgba(127,220,255,.28);background:rgba(150,180,200,.06);border-radius:3px}
+.strip{position:absolute;left:0;right:0;bottom:0;height:12.5%;background:rgba(10,16,22,.82);border-top:1px solid rgba(127,220,255,.15)}
+#hud{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;filter:drop-shadow(0 0 2px rgba(127,220,255,.95)) drop-shadow(0 0 7px rgba(127,220,255,.45))}
+.tag{position:absolute;left:0;top:calc(100% + 6px);font-family:var(--mono);font-size:.66rem;color:var(--dim);letter-spacing:.06em;text-shadow:0 1px 6px #000}
+
+.toast{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + 13% + min(44vw,260px) + 34px);transform:translateX(-50%);
+  background:var(--deck);border:1px solid var(--line);padding:6px 12px;border-radius:999px;font-size:.85rem;white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis;
+  opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.on{opacity:1}
+
+.deck{position:absolute;left:0;right:0;bottom:0;background:var(--deck);border-top:1px solid var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  padding-block:12px calc(env(safe-area-inset-bottom,0px) + 12px);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:10px}
+.deck.min .more{display:none}
+.row{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{background:transparent;border:0;padding:8px 14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:.8rem;color:var(--dim)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:rgba(127,220,255,.14);color:var(--ice)}
+.zoom{display:flex;align-items:center;gap:10px;flex:1 1 220px;min-width:0;font-size:.8rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+.zoom input{flex:1;min-width:0;accent-color:var(--ice)}
+.zoom output{font-family:var(--mono);color:var(--ice);min-width:3.6em;text-align:right;font-variant-numeric:tabular-nums}
+.tog{background:transparent;border:1px solid var(--line);border-radius:6px;padding:7px 11px;font-size:.8rem;color:var(--ink)}
+.tog[aria-pressed="true"]{border-color:var(--ice);color:var(--ice);background:rgba(127,220,255,.1)}
+.tog.red{border-color:rgba(217,71,60,.6);color:#ff8a80}
+.say{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.say label{font-size:.8rem;color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+.say input{flex:1 1 160px;min-width:0;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:6px;padding:7px 10px;font-family:var(--mono);font-size:.85rem;text-transform:uppercase}
+.hint{margin:0;font-size:.8rem;color:var(--dim);line-height:1.45;max-width:70ch}
+.hint b{color:var(--ink);font-weight:600}
+.minbtn{margin-left:auto}
+
+.gate{position:absolute;inset:0;display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px));background:rgba(5,8,12,.55)}
+.card{width:min(440px,100%);background:var(--deck);border:1px solid var(--line);border-radius:10px;padding:22px;display:grid;gap:12px;
+  margin-top:min(30vh,240px)}
+.card h1{margin:0;font-size:1.5rem;letter-spacing:.04em;text-wrap:balance}
+.card h1 b{color:var(--shell)}
+.card p{margin:0;color:var(--dim);line-height:1.5;font-size:.92rem}
+.go{justify-self:start;background:var(--ice);color:#04121a;border:0;border-radius:6px;padding:10px 18px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.err{color:#ff8a80!important}
+@media (prefers-reduced-motion:reduce){.eye,.toast{transition:none}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <video id="cam" playsinline muted autoplay></video>
+  <canvas id="world"></canvas>
+  <div id="tap" aria-label="Tap something to lock onto it"></div>
+
+  <div class="top">
+    <div class="brand">Iris <b>HUD</b> sim</div>
+    <div class="live" id="live">camera off</div>
+  </div>
+
+  <div class="eye" id="eye">
+    <div class="glass"></div>
+    <div class="strip"></div>
+    <canvas id="hud" width="512" height="256" aria-label="Simulated 128 by 64 transparent OLED"></canvas>
+    <div class="tag">1.51" transparent OLED · 128×64 · drawn 1:1</div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <div class="deck" id="deck">
+    <div class="row">
+      <div class="seg" role="group" aria-label="Mode">
+        <button type="button" data-mode="hud" aria-pressed="true">HUD</button>
+        <button type="button" data-mode="cam" aria-pressed="false">Zoom</button>
+        <button type="button" data-mode="night" aria-pressed="false">Night</button>
+      </div>
+      <label class="zoom" for="zoom"><span>Zoom</span><input type="range" id="zoom" min="1" max="10" step="0.5" value="2"><output id="zoomOut">2×</output></label>
+      <button type="button" class="tog minbtn" id="minBtn" aria-expanded="true">Hide</button>
+    </div>
+    <div class="row more">
+      <button type="button" class="tog" id="flip" aria-pressed="false">Flip eyepiece up</button>
+      <button type="button" class="tog" id="horizon" aria-pressed="false">Horizon lock</button>
+      <button type="button" class="tog" id="handsBtn" aria-pressed="false">Hand tracking</button>
+      <button type="button" class="tog red" id="release" hidden>Release lock</button>
+      <button type="button" class="tog" id="switchCam">Switch camera</button>
+    </div>
+    <form class="say more" id="say"><label for="sayIn">Make Iris say</label><input id="sayIn" maxlength="40" placeholder="Front door is unlocked" autocomplete="off"><button type="submit" class="tog">Send</button></form>
+    <p class="hint more"><b>Tap anything</b> in the world to lock onto it. With hand tracking on: <b>pinch</b> to lock, <b>open palm</b> to release, <b>swipe</b> sideways to change mode. Keys: 1 2 3 modes, + − zoom, F flip.</p>
+  </div>
+
+  <div class="gate" id="gate">
+    <div class="card">
+      <h1>Iris <b>Glasses</b> simulator</h1>
+      <p>Your camera plays the real world, and the panel up top is the 128×64 transparent OLED exactly as the glasses would show it, pixel for pixel. Video stays on your device.</p>
+      <p id="gateMsg">On a phone, the back camera is used. On a laptop, your webcam.</p>
+      <button type="button" class="go" id="start">Start camera</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+const W=128,H=64,VIS=56,S=4;
+const FONT={
+"0":"111101101101111","1":"010110010010111","2":"111001111100111","3":"111001111001111","4":"101101111001001",
+"5":"111100111001111","6":"111100111101111","7":"111001001010010","8":"111101111101111","9":"111101111001111",
+"A":"010101111101101","B":"110101110101110","C":"011100100100011","D":"110101101101110","E":"111100110100111",
+"F":"111100110100100","G":"011100101101011","H":"101101111101101","I":"111010010010111","J":"001001001101010",
+"K":"101101110101101","L":"100100100100111","M":"101111111101101","N":"110101101101101","O":"010101101101010",
+"P":"110101110100100","Q":"010101101110011","R":"110101110101101","S":"011100010001110","T":"111010010010010",
+"U":"101101101101111","V":"101101101101010","W":"101101111111101","X":"101101010101101","Y":"101101010010010",
+"Z":"111001010100111"," ":"000000000000000",":":"000010000010000",".":"000000000000010","-":"000000111000000",
+"%":"101001010100101",">":"100010001010100","/":"001001010100100","!":"010010010000010","?":"111001010000010",
+"+":"000010111010000","'":"010010000000000",",":"000000000010100"
+};
+const BAYER=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5];
+const MODES=["hud","cam","night"];
+const NAMES={hud:"HUD",cam:"Zoom",night:"Night vision"};
+
+const $=id=>document.getElementById(id);
+const video=$("cam"),hudCv=$("hud"),hctx=hudCv.getContext("2d"),worldCv=$("world"),wctx=worldCv.getContext("2d");
+const camCv=document.createElement("canvas");camCv.width=W;camCv.height=VIS;
+const cctx=camCv.getContext("2d",{willReadFrequently:true});
+const smCv=document.createElement("canvas");const sctx=smCv.getContext("2d",{willReadFrequently:true});
+const hud=new Uint8Array(W*H);
+
+const st={mode:"hud",zoom:2,flipped:false,horizon:false,roll:0,rollTarget:0,mirror:true,facing:"environment",running:false,
+  battery:100,lock:null,view:null,msgs:["SAY HEY IRIS","FLIP UP TO SLEEP","PC LINK OK"],msgIdx:0,msgX:W,cursor:null};
+let stream=null,landmarker=null,lastVT=-1,lastHandT=-1,gray=null,SW=160,SH=90;
+
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+function clean(s){return s.toUpperCase().split("").map(c=>FONT[c]?c:"?").join("");}
+function px(x,y){x|=0;y|=0;if(x>=0&&y>=0&&x<W&&y<H)hud[y*W+x]=1;}
+function off(x,y){x|=0;y|=0;if(x>=0&&y>=0&&x<W&&y<H)hud[y*W+x]=0;}
+function tw(s,k=1){return s.length?(s.length*4-1)*k:0;}
+function text(s,x,y,k=1,yMax=H){
+  for(let i=0;i<s.length;i++){
+    const g=FONT[s[i]]||FONT["?"],ox=x+i*4*k;
+    if(ox>W||ox+3*k<0)continue;
+    for(let r=0;r<5;r++)for(let c=0;c<3;c++)if(g[r*3+c]==="1")
+      for(let a=0;a<k;a++)for(let b=0;b<k;b++){const yy=y+r*k+a;if(yy<yMax)px(ox+c*k+b,yy);}
+  }
+}
+function hline(x0,x1,y,dash){for(let x=x0;x<=x1;x++)if(!dash||(x>>1)%2===0)px(x,y);}
+function clearBox(x,y,w,h){for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)off(i,j);}
+
+let toastT=0;
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("on");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("on"),1800);}
+
+function setMode(m){
+  st.mode=m;
+  document.querySelectorAll("[data-mode]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===m)));
+  if(m==="hud")releaseLock(true);
+}
+function setZoom(z){st.zoom=clamp(Math.round(z*2)/2,1,10);$("zoom").value=st.zoom;$("zoomOut").textContent=st.zoom+"×";}
+
+function crop(){
+  const vw=video.videoWidth,vh=video.videoHeight;
+  let cw=vw/st.zoom,ch=cw*VIS/W;
+  if(ch>vh){ch=vh;cw=ch*W/VIS;}
+  let cx=vw/2,cy=vh/2;
+  if(st.lock&&st.view){cx=st.view.x;cy=st.view.y;}
+  cx=clamp(cx,cw/2,vw-cw/2);cy=clamp(cy,ch/2,vh-ch/2);
+  return{cx,cy,cw,ch,vw,vh,k:W/cw};
+}
+function toHud(vx,vy,r){
+  if(st.mode==="hud"||!r)return{x:(st.mirror?1-vx/video.videoWidth:vx/video.videoWidth)*W,y:vy/video.videoHeight*VIS};
+  let dx=(vx-r.cx)*r.k,dy=(vy-r.cy)*r.k;if(st.mirror)dx=-dx;
+  if(st.horizon){const c=Math.cos(st.roll),s=Math.sin(st.roll);[dx,dy]=[dx*c-dy*s,dx*s+dy*c];}
+  return{x:W/2+dx,y:VIS/2+dy};
+}
+
+function drawHome(t){
+  const d=new Date(),hh=String(d.getHours()).padStart(2,"0"),mm=String(d.getMinutes()).padStart(2,"0");
+  const clock=hh+(d.getSeconds()%2?":":" ")+mm;
+  text(clock,(W-tw(clock,3))>>1,3,3);
+  const l="IRIS ONLINE";text(l,(W-tw(l))>>1,23);
+  if(Math.floor(t/600)%2)for(let i=0;i<3;i++)for(let j=0;j<3;j++)px(((W+tw(l))>>1)+3+i,24+j);
+  hline(10,117,32,true);
+  const m=st.msgs[st.msgIdx%st.msgs.length];
+  text(m,Math.round(st.msgX),39,1,46);
+  st.msgX-=0.6;
+  if(st.msgX<-tw(m)){st.msgIdx++;st.msgX=W;}
+  const sub=st.lock?"LOCKED":(landmarker?"HANDS ON":"TAP 2 FOR ZOOM");
+  text(sub,(W-tw(sub))>>1,48);
+}
+
+function drawCamera(t){
+  if(!st.running||video.readyState<2){const s="NO CAMERA";text(s,(W-tw(s))>>1,24);return null;}
+  const r=crop();
+  cctx.save();cctx.fillStyle="#000";cctx.fillRect(0,0,W,VIS);
+  cctx.translate(W/2,VIS/2);
+  if(st.horizon)cctx.rotate(st.roll);
+  cctx.scale(r.k,r.k);if(st.mirror)cctx.scale(-1,1);
+  cctx.drawImage(video,-r.cx,-r.cy);
+  cctx.restore();
+  const d=cctx.getImageData(0,0,W,VIS).data,lum=new Uint8Array(W*VIS),hist=new Uint32Array(256);
+  for(let i=0;i<W*VIS;i++){const v=(d[i*4]*77+d[i*4+1]*150+d[i*4+2]*29)>>8;lum[i]=v;hist[v]++;}
+  const n=W*VIS,night=st.mode==="night";
+  let acc=0,lo=0,hi=255;
+  for(let v=0;v<256;v++){acc+=hist[v];if(acc>=n*0.02){lo=v;break;}}
+  acc=0;for(let v=255;v>=0;v--){acc+=hist[v];if(acc>=n*(night?0.06:0.02)){hi=v;break;}}
+  const span=Math.max(24,hi-lo);
+  for(let y=0;y<VIS;y++)for(let x=0;x<W;x++){
+    let v=(lum[y*W+x]-lo)/span;
+    if(night){v=Math.pow(clamp(v,0,1),0.55)*1.15+(Math.random()-0.5)*0.22;}
+    if(v*16>BAYER[(y&3)*4+(x&3)]+0.5)hud[y*W+x]=1;
+  }
+  if(night){text("NV",2,2);}
+  if(st.lock){
+    const p=toHud(st.lock.vx,st.lock.vy,r);
+    if(st.lock.lost){
+      if(Math.floor(t/350)%2){const s="TARGET LOST";clearBox(((W-tw(s))>>1)-3,22,tw(s)+6,11);text(s,(W-tw(s))>>1,25);}
+    }else{
+      const bx=Math.round(p.x),by=Math.round(p.y),w=11,h=8;
+      clearBox(bx-w-1,by-h-1,5,2);clearBox(bx+w-3,by-h-1,5,2);clearBox(bx-w-1,by+h,5,2);clearBox(bx+w-3,by+h,5,2);
+      for(let i=0;i<4;i++){px(bx-w+i,by-h);px(bx+w-i,by-h);px(bx-w+i,by+h);px(bx+w-i,by+h);}
+      for(let i=0;i<3;i++){px(bx-w,by-h+i);px(bx+w,by-h+i);px(bx-w,by+h-i);px(bx+w,by+h-i);}
+    }
+  }
+  return r;
+}
+
+function drawStrip(){
+  hline(0,W-1,VIS,false);
+  const d=new Date(),clock=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+  text(clock,2,58);
+  let m=st.mode==="hud"?"IRIS":(st.mode==="night"?"NV ":"ZOOM ")+st.zoom+"X";
+  if(st.lock&&st.mode!=="hud")m+=" LOCK";
+  if(st.horizon&&st.mode!=="hud")m+=" H";
+  text(m,(W-tw(m))>>1,58);
+  const b=Math.max(0,Math.ceil(st.battery))+"%";text(b,W-2-tw(b),58);
+}
+
+function drawCursor(r){
+  if(!st.cursor||st.flipped)return;
+  const p=toHud(st.cursor.vx,st.cursor.vy,r),x=Math.round(p.x),y=Math.round(p.y);
+  if(y>=VIS)return;
+  for(let i=-3;i<=3;i++){if(Math.abs(i)>1){px(x+i,y);px(x,y+i);}}
+  if(st.cursor.pinch){px(x,y);}
+}
+
+function paint(){
+  hctx.clearRect(0,0,hudCv.width,hudCv.height);
+  hctx.fillStyle="#7fdcff";
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(hud[y*W+x])hctx.fillRect(x*S,y*S,S-1,S-1);
+}
+
+function renderHud(t){
+  hud.fill(0);
+  if(!st.flipped){
+    let r=null;
+    if(st.mode==="hud")drawHome(t);else r=drawCamera(t);
+    drawCursor(r);
+    drawStrip();
+  }
+  paint();
+}
+
+function grabGray(){
+  const vw=video.videoWidth,vh=video.videoHeight;
+  const sh=Math.max(40,Math.round(SW*vh/vw));
+  if(smCv.width!==SW||smCv.height!==sh){smCv.width=SW;smCv.height=sh;SH=sh;}
+  sctx.drawImage(video,0,0,SW,SH);
+  const d=sctx.getImageData(0,0,SW,SH).data;
+  if(!gray||gray.length!==SW*SH)gray=new Float32Array(SW*SH);
+  for(let i=0;i<SW*SH;i++)gray[i]=d[i*4]*0.3+d[i*4+1]*0.59+d[i*4+2]*0.11;
+}
+const T=16,HT=8;
+function patch(cx,cy,out){
+  let sum=0,k=0;
+  for(let y=0;y<T;y++)for(let x=0;x<T;x++){const v=gray[(cy-HT+y)*SW+(cx-HT+x)];out[k++]=v;sum+=v;}
+  const m=sum/(T*T);for(let i=0;i<T*T;i++)out[i]-=m;return out;
+}
+const tmp=new Float32Array(T*T);
+function startLock(vx,vy){
+  if(!st.running)return;
+  grabGray();
+  const vw=video.videoWidth,vh=video.videoHeight;
+  const sx=clamp(Math.round(vx*SW/vw),HT,SW-HT-1),sy=clamp(Math.round(vy*SH/vh),HT,SH-HT-1);
+  st.lock={sx,sy,vx,vy,tpl:patch(sx,sy,new Float32Array(T*T)),lost:false,lostAt:0};
+  st.view={x:vx,y:vy};
+  if(st.mode==="hud")setMode("cam");
+  $("release").hidden=false;
+  toast("Locked on");
+}
+function releaseLock(quiet){
+  if(!st.lock)return;
+  st.lock=null;st.view=null;$("release").hidden=true;
+  if(!quiet)toast("Lock released");
+}
+function track(){
+  const L=st.lock;grabGray();
+  const R=L.lost?22:12;let best=1e12,bx=L.sx,by=L.sy;
+  for(let dy=-R;dy<=R;dy++){
+    const cy=L.sy+dy;if(cy<HT||cy>SH-HT-1)continue;
+    for(let dx=-R;dx<=R;dx++){
+      const cx=L.sx+dx;if(cx<HT||cx>SW-HT-1)continue;
+      patch(cx,cy,tmp);let s=0;
+      for(let i=0;i<T*T;i++){s+=Math.abs(tmp[i]-L.tpl[i]);if(s>=best)break;}
+      if(s<best){best=s;bx=cx;by=cy;}
+    }
+  }
+  const score=best/(T*T);
+  if(score<20){
+    L.sx=bx;L.sy=by;L.lost=false;
+    patch(bx,by,tmp);for(let i=0;i<T*T;i++)L.tpl[i]=L.tpl[i]*0.92+tmp[i]*0.08;
+    L.vx=bx*video.videoWidth/SW;L.vy=by*video.videoHeight/SH;
+  }else if(!L.lost){L.lost=true;L.lostAt=performance.now();}
+  if(!L.lost){st.view.x+=(L.vx-st.view.x)*0.35;st.view.y+=(L.vy-st.view.y)*0.35;}
+}
+
+function sizeWorld(){
+  const dpr=Math.min(2,window.devicePixelRatio||1);
+  worldCv.width=Math.round(innerWidth*dpr);worldCv.height=Math.round(innerHeight*dpr);
+  wctx.setTransform(dpr,0,0,dpr,0,0);
+}
+function vidToScreen(vx,vy){
+  const vw=video.videoWidth,vh=video.videoHeight,sw=innerWidth,sh=innerHeight;
+  const k=Math.max(sw/vw,sh/vh),ox=(sw-vw*k)/2,oy=(sh-vh*k)/2;
+  let x=ox+vx*k;if(st.mirror)x=sw-x;
+  return{x,y:oy+vy*k,k};
+}
+function screenToVid(x,y){
+  const vw=video.videoWidth,vh=video.videoHeight,sw=innerWidth,sh=innerHeight;
+  const k=Math.max(sw/vw,sh/vh),ox=(sw-vw*k)/2,oy=(sh-vh*k)/2;
+  if(st.mirror)x=sw-x;
+  return{x:clamp((x-ox)/k,0,vw),y:clamp((y-oy)/k,0,vh)};
+}
+function drawWorld(){
+  wctx.clearRect(0,0,innerWidth,innerHeight);
+  if(!st.running||!video.videoWidth)return;
+  if(st.mode!=="hud"){
+    const r=crop(),a=vidToScreen(r.cx-r.cw/2,r.cy-r.ch/2),b=vidToScreen(r.cx+r.cw/2,r.cy+r.ch/2);
+    wctx.strokeStyle="rgba(127,220,255,.55)";wctx.setLineDash([6,5]);wctx.lineWidth=1.2;
+    wctx.strokeRect(Math.min(a.x,b.x),a.y,Math.abs(b.x-a.x),b.y-a.y);wctx.setLineDash([]);
+    wctx.fillStyle="rgba(127,220,255,.8)";wctx.font="600 11px 'JetBrains Mono',monospace";
+    wctx.fillText("camera crop "+st.zoom+"×",Math.min(a.x,b.x)+4,a.y-6);
+  }
+  if(st.lock){
+    const p=vidToScreen(st.lock.vx,st.lock.vy),s=26;
+    wctx.strokeStyle=st.lock.lost?"rgba(255,120,110,.9)":"rgba(217,71,60,.95)";wctx.lineWidth=2;
+    wctx.strokeRect(p.x-s,p.y-s,s*2,s*2);
+    wctx.beginPath();wctx.moveTo(p.x-s-8,p.y);wctx.lineTo(p.x-s,p.y);wctx.moveTo(p.x+s,p.y);wctx.lineTo(p.x+s+8,p.y);wctx.stroke();
+  }
+  if(st.hand){
+    wctx.fillStyle="rgba(127,220,255,.85)";
+    for(const lm of st.hand){const p=vidToScreen(lm.x*video.videoWidth,lm.y*video.videoHeight);wctx.beginPath();wctx.arc(p.x,p.y,3,0,7);wctx.fill();}
+  }
+}
+
+const pinchState={on:false},palm={since:0},swipe={hist:[],cool:0};
+function handleHands(t){
+  if(!landmarker||video.currentTime===lastHandT)return;
+  lastHandT=video.currentTime;
+  let res;try{res=landmarker.detectForVideo(video,t);}catch(e){return;}
+  const lm=res&&res.landmarks&&res.landmarks[0];
+  if(!lm){st.hand=null;st.cursor=null;pinchState.on=false;palm.since=0;swipe.hist=[];return;}
+  st.hand=lm;
+  const vw=video.videoWidth,vh=video.videoHeight,dist=(a,b)=>Math.hypot(lm[a].x-lm[b].x,lm[a].y-lm[b].y);
+  const size=dist(0,9)||1e-3,pinching=dist(4,8)/size<0.3;
+  const mx=(lm[4].x+lm[8].x)/2*vw,my=(lm[4].y+lm[8].y)/2*vh;
+  st.cursor={vx:pinching?mx:lm[8].x*vw,vy:pinching?my:lm[8].y*vh,pinch:pinching};
+  if(pinching&&!pinchState.on){startLock(mx,my);}
+  pinchState.on=pinching;
+  const open=[[8,6],[12,10],[16,14],[20,18]].every(([tip,pip])=>dist(tip,0)>dist(pip,0)*1.12)&&!pinching;
+  if(open){if(!palm.since)palm.since=t;if(st.lock&&t-palm.since>900){releaseLock();palm.since=t+5000;}}else palm.since=0;
+  swipe.hist.push({t,x:lm[0].x});swipe.hist=swipe.hist.filter(h=>t-h.t<320);
+  if(!pinching&&t>swipe.cool&&swipe.hist.length>3){
+    let dx=lm[0].x-swipe.hist[0].x;if(st.mirror)dx=-dx;
+    if(Math.abs(dx)>0.22){
+      const i=MODES.indexOf(st.mode),n=MODES[(i+(dx>0?1:-1)+MODES.length)%MODES.length];
+      setMode(n);toast("Swipe: "+NAMES[n]);swipe.cool=t+900;swipe.hist=[];
+    }
+  }
+}
+
+async function enableHands(){
+  const btn=$("handsBtn");
+  if(landmarker){landmarker.close&&landmarker.close();landmarker=null;st.hand=null;st.cursor=null;btn.setAttribute("aria-pressed","false");btn.textContent="Hand tracking";return;}
+  if(!st.running){toast("Start the camera first");return;}
+  btn.textContent="Loading hands…";btn.disabled=true;
+  try{
+    const base="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
+    const m=await import(base);const v=(m.default&&m.default.FilesetResolver)?m.default:m;
+    const files=await v.FilesetResolver.forVisionTasks(base+"/wasm");
+    const opts=d=>({baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",delegate:d},runningMode:"VIDEO",numHands:1});
+    try{landmarker=await v.HandLandmarker.createFromOptions(files,opts("GPU"));}
+    catch(e){landmarker=await v.HandLandmarker.createFromOptions(files,opts("CPU"));}
+    btn.setAttribute("aria-pressed","true");btn.textContent="Hand tracking on";toast("Pinch to lock, open palm to release");
+  }catch(e){
+    btn.textContent="Hand tracking";toast("Hand tracking could not load. Check your internet connection.");console.error(e);
+  }finally{btn.disabled=false;}
+}
+
+let motionRef=null,gotMotion=false;
+function onMotion(e){
+  const g=e.accelerationIncludingGravity;if(!g||g.x==null||g.y==null)return;
+  if(Math.hypot(g.x,g.y)<3)return;
+  gotMotion=true;
+  const a=Math.atan2(g.x,g.y);
+  if(motionRef===null)motionRef=a;
+  let d=a-motionRef;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;
+  st.rollTarget=-d;
+}
+async function toggleHorizon(){
+  const btn=$("horizon");
+  if(st.horizon){st.horizon=false;window.removeEventListener("devicemotion",onMotion);btn.setAttribute("aria-pressed","false");st.roll=0;st.rollTarget=0;return;}
+  try{
+    if(typeof DeviceMotionEvent!=="undefined"&&typeof DeviceMotionEvent.requestPermission==="function"){
+      const r=await DeviceMotionEvent.requestPermission();
+      if(r!=="granted"){toast("Motion access was declined");return;}
+    }
+  }catch(e){toast("Motion access was declined");return;}
+  motionRef=null;gotMotion=false;st.horizon=true;btn.setAttribute("aria-pressed","true");
+  window.addEventListener("devicemotion",onMotion);
+  toast("Hold level, then tilt: the zoom view stays level");
+  setTimeout(()=>{if(st.horizon&&!gotMotion)toast("No tilt sensor here. Try it on your phone.");},1600);
+}
+addEventListener("orientationchange",()=>{motionRef=null;});
+
+async function startCam(){
+  const msg=$("gateMsg");
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){msg.textContent="This browser can't open the camera. Try Chrome, Edge or Safari.";msg.classList.add("err");return;}
+  try{
+    if(stream)stream.getTracks().forEach(t=>t.stop());
+    stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:st.facing},width:{ideal:1920},height:{ideal:1080}}});
+    video.srcObject=stream;await video.play();
+    const s=stream.getVideoTracks()[0].getSettings();
+    st.mirror=s.facingMode?s.facingMode==="user":!/Android|iPhone|iPad/i.test(navigator.userAgent);
+    video.classList.toggle("mirror",st.mirror);
+    st.running=true;$("gate").hidden=true;releaseLock(true);
+    $("live").textContent=(s.width||video.videoWidth)+"×"+(s.height||video.videoHeight)+" camera";
+  }catch(e){
+    msg.textContent="Camera blocked or not found. Allow camera access for this site in your browser settings, then tap Start camera again.";msg.classList.add("err");
+    $("gate").hidden=false;
+  }
+}
+
+let lastT=0;
+function frame(t){
+  const dt=Math.min(0.2,(t-lastT)/1000||0);lastT=t;
+  if(st.running&&video.readyState>=2){
+    if(st.lock&&st.mode!=="hud"&&video.currentTime!==lastVT){lastVT=video.currentTime;track();}
+    handleHands(t);
+  }
+  st.roll+=(st.rollTarget-st.roll)*0.25;
+  const drain=st.flipped?0.002:(st.mode==="hud"?0.008:0.03);
+  st.battery=Math.max(0,st.battery-drain*dt);
+  renderHud(t);drawWorld();
+  requestAnimationFrame(frame);
+}
+
+document.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>setMode(b.dataset.mode)));
+$("zoom").addEventListener("input",e=>setZoom(+e.target.value));
+$("flip").addEventListener("click",()=>{
+  st.flipped=!st.flipped;$("eye").classList.toggle("up",st.flipped);
+  const b=$("flip");b.setAttribute("aria-pressed",String(st.flipped));b.textContent=st.flipped?"Flip eyepiece down":"Flip eyepiece up";
+  toast(st.flipped?"Reed switch open: screen asleep":"Reed switch closed: screen awake");
+});
+$("horizon").addEventListener("click",toggleHorizon);
+$("handsBtn").addEventListener("click",enableHands);
+$("release").addEventListener("click",()=>releaseLock());
+$("switchCam").addEventListener("click",()=>{st.facing=st.facing==="user"?"environment":"user";if(st.running)startCam();});
+$("start").addEventListener("click",startCam);
+$("minBtn").addEventListener("click",()=>{const d=$("deck"),m=d.classList.toggle("min");$("minBtn").textContent=m?"More":"Hide";$("minBtn").setAttribute("aria-expanded",String(!m));});
+$("say").addEventListener("submit",e=>{
+  e.preventDefault();const v=$("sayIn").value.trim();if(!v)return;
+  st.msgs.unshift("IRIS: "+clean(v));st.msgs=st.msgs.slice(0,5);st.msgIdx=0;st.msgX=W;$("sayIn").value="";setMode("hud");
+});
+$("tap").addEventListener("pointerdown",e=>{
+  if(!st.running||!video.videoWidth)return;
+  const p=screenToVid(e.clientX,e.clientY);startLock(p.x,p.y);
+});
+addEventListener("keydown",e=>{
+  if(e.target.tagName==="INPUT")return;
+  if(e.key==="1")setMode("hud");else if(e.key==="2")setMode("cam");else if(e.key==="3")setMode("night");
+  else if(e.key==="+"||e.key==="=")setZoom(st.zoom+0.5);else if(e.key==="-")setZoom(st.zoom-0.5);
+  else if(e.key==="f"||e.key==="F")$("flip").click();else if(e.key==="l"||e.key==="L")releaseLock();
+});
+addEventListener("resize",sizeWorld);
+sizeWorld();setZoom(2);requestAnimationFrame(frame);
+</script>
+</body>
+</html>
