@@ -2319,16 +2319,18 @@ p{margin:0 0 12px}
       <div class="foot"><span>— E.</span><span>entry X</span></div>
     </article>
 
-    <article id="e011" data-no="XI" data-title="Iris Glasses" data-sub="Flip-down transparent OLED HUD for Iris" data-date="26 Oct 2026">
+    <article id="e011" data-no="XI" data-title="Iris Glasses" data-sub="Transparent OLED HUD with night vision, zoom and hand tracking" data-date="26 Oct 2026">
       <div class="dateline"><span>Entry No. 011</span><span>26 October 2026</span><span>Subject: Wearables &amp; AI</span></div>
       <h2 class="entry-title">The Iris Glasses</h2>
       <svg class="underline" viewBox="0 0 420 12" aria-hidden="true"><path d="M2 6C80 9 150 4 240 7S360 4 418 7" fill="none" stroke="var(--sepia)" stroke-width="2.2" stroke-linecap="round"/></svg>
       <p class="lede">A cyberpunk <b>one-eye HUD</b> for Iris. A <span class="circled">transparent OLED</span> on a flip-down arm swings in front of my right eye. The glasses listen, send my voice to Iris on the PC over Wi-Fi, and show her replies floating in front of me. Goal: hella cheap but still good.</p>
 
       <section class="versions">
-        <h3>Versions <small>V1</small></h3>
+        <h3>Versions <small>V1 → V2</small></h3>
         <div class="vlog">
-          <div class="ver current"><div class="vtag">V1</div><div class="vbody"><h4>Manual flip-down monocle <span>26 Oct 2026</span></h4><p>Started as "EDITH glasses", renamed so they run Iris. One 1.51" transparent OLED behind a Cardboard lens, an ESP32-S3 Super Mini and mic in an ear pod, and a hinge that clicks up and down on magnets. A reed switch wakes the screen when it flips down. Dropped the servo flip to save weight, battery and money.</p><ul class="pc"><li class="pro">About $50–65 all up</li><li class="pro">Actually readable thanks to the lens, not just a prop</li><li class="pro">Plugs straight into the Iris voice pipeline I already have</li><li class="con">Monochrome light blue, dim in bright sun</li><li class="con">OLED converter board is chunky, frame has to hide it</li><li class="con">Can't cut the OLED down, the edges hold the wiring and seal</li></ul></div></div>
+          <div class="ver"><div class="vtag">V1</div><div class="vbody"><h4>Manual flip-down monocle <span>26 Oct 2026</span></h4><p>Started as "EDITH glasses", renamed so they run Iris. One 1.51" transparent OLED behind a Cardboard lens, an ESP32-S3 Super Mini and mic in an ear pod, and a hinge that clicks up and down on magnets. A reed switch wakes the screen when it flips down. Dropped the servo flip to save weight, battery and money.</p><ul class="pc"><li class="pro">About $50–65 all up</li><li class="pro">Actually readable thanks to the lens, not just a prop</li><li class="pro">Plugs straight into the Iris voice pipeline I already have</li><li class="con">Monochrome light blue, dim in bright sun</li><li class="con">OLED converter board is chunky, frame has to hide it</li><li class="con">Can't cut the OLED down, the edges hold the wiring and seal</li></ul></div></div>
+        
+          <div class="ver current"><div class="vtag">V2</div><div class="vbody"><h4>Eyes upgrade: night vision, zoom, hand tracking <span>26 Oct 2026</span></h4><p>Added a forward camera. Swapped the Super Mini + separate mic for a <b>XIAO ESP32S3 Sense</b> (camera port, mic and LiPo charging all built in). The camera is an OV2640 <b>with no IR-cut filter</b>, lit by 850 nm IR LEDs, so it sees in the dark. Zoom is digital: grab a big frame and crop the middle. The camera streams to the PC, where my hand-tracking code (OpenCV + MediaPipe) turns gestures into HUD controls.</p><ul class="pc"><li class="pro">Night vision for about $10 extra</li><li class="pro">Reuses my hand-tracking project instead of starting over</li><li class="pro">XIAO replaces three boards, so the pod gets smaller</li><li class="con">HUD is only 128×64 blue, so the night/zoom view is a tiny dithered picture</li><li class="con">Video over Wi-Fi drains the battery much faster</li><li class="con">Zoom is digital only, gets blocky past ~3×</li></ul></div></div>
         </div>
       </section>
 
@@ -2497,6 +2499,83 @@ p{margin:0 0 12px}
           <li><label><input type="checkbox" id="t011-h"><span>Final assembly, glossy shell, antenna stub. Wear it!</span></label></li>
         </ul>
         <div class="stamp"><b>Careful</b><span>Never cut or snap the OLED glass, it dies.<br>LiPo pinned near my head: no puncturing, no squashing, unplug while soldering.<br>Don't stare at a bright screen right up close for ages, keep the brightness low.</span></div>
+      </section>
+
+      <div class="part"><span>Part three</span>V2: the eyes</div>
+
+      <section class="wide">
+        <h3>Camera modes <small>sketch III</small></h3>
+        <p style="max-width:62ch">The camera sits in the front of the ear pod, looking where I look. Everything heavy happens on the PC, and only small results come back to the HUD.</p>
+        <div class="sketch"><div style="max-width:760px">
+          <svg viewBox="0 0 760 250" role="img" aria-label="Flow sketch: the XIAO ESP32S3 Sense camera, lit by IR LEDs, streams video over Wi-Fi to the PC. The PC runs three modes: night vision, digital zoom by cropping the centre, and hand tracking with MediaPipe. Night and zoom send back a small dithered picture to the OLED; hand tracking sends back commands like pinch to select and swipe to scroll.">
+            <defs><marker id="iris-arrow3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink)"/></marker></defs>
+            <g filter="url(#rough)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="20" y="70" width="150" height="90" rx="8" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.2"/>
+              <circle cx="60" cy="115" r="16" stroke="var(--ink)" stroke-width="2"/><circle cx="60" cy="115" r="6" fill="var(--ink)" stroke="none"/>
+              <circle cx="104" cy="96" r="5" fill="var(--red)" fill-opacity=".4" stroke="var(--red)" stroke-width="1.4"/><circle cx="104" cy="134" r="5" fill="var(--red)" fill-opacity=".4" stroke="var(--red)" stroke-width="1.4"/>
+              <path d="M170 115H286" stroke="#3f6b2f" stroke-width="2.2" marker-end="url(#iris-arrow3)"/>
+              <rect x="290" y="20" width="200" height="56" rx="7" fill="var(--card)" stroke="var(--ink)" stroke-width="2"/>
+              <rect x="290" y="88" width="200" height="56" rx="7" fill="var(--card)" stroke="var(--ink)" stroke-width="2"/>
+              <rect x="290" y="156" width="200" height="56" rx="7" fill="var(--card)" stroke="var(--ink)" stroke-width="2"/>
+              <path d="M490 48H580V100M490 116H580M490 184H580V132" stroke="var(--blue)" stroke-width="2"/>
+              <path d="M580 116H616" stroke="var(--blue)" stroke-width="2.2" marker-end="url(#iris-arrow3)"/>
+              <rect x="620" y="86" width="120" height="60" rx="5" fill="var(--blue)" fill-opacity=".14" stroke="var(--ink)" stroke-width="2.2"/>
+            </g>
+            <g font-family="Special Elite,monospace" font-size="13" fill="var(--ink)" text-anchor="middle">
+              <text x="95" y="62">XIAO S3 Sense</text>
+              <text x="390" y="44">Night vision</text><text x="390" y="62" font-size="11">IR on, boost contrast</text>
+              <text x="390" y="112">Zoom</text><text x="390" y="130" font-size="11">crop the middle, 2×–3×</text>
+              <text x="390" y="180">Hand tracking</text><text x="390" y="198" font-size="11">MediaPipe on the PC</text>
+              <text x="680" y="112">OLED</text><text x="680" y="130" font-size="11">128×56 view</text>
+            </g>
+            <g font-family="Reenie Beanie,cursive" font-size="22">
+              <text x="118" y="190" fill="var(--red)">850 nm IR LEDs</text>
+              <text x="186" y="104" fill="#3f6b2f">video (Wi-Fi)</text>
+              <text x="560" y="240" fill="var(--blue)">pinch = select, swipe = scroll</text>
+            </g>
+          </svg>
+        </div></div>
+      </section>
+
+      <section class="wide">
+        <h3>V2 changes <small>XIAO ESP32S3 Sense</small></h3>
+        <div class="wiring" style="max-width:760px">
+          <div class="clip"><h4>OLED (moves pins)</h4>
+            <ul class="pins">
+              <li><span>SCK</span><span>D8</span></li>
+              <li><span>MOSI</span><span>D10</span></li>
+              <li><span>CS</span><span>D1</span></li>
+              <li><span>DC</span><span>D2</span></li>
+              <li><span>RST</span><span>D3</span></li>
+              <li class="pwr"><span>VCC</span><span>3V3</span></li>
+            </ul>
+          </div>
+          <div class="clip"><h4>Everything else</h4>
+            <ul class="pins">
+              <li><span>Reed switch</span><span>D0 + GND</span></li>
+              <li><span>IR LEDs (via MOSFET)</span><span>D4</span></li>
+              <li><span>Status LED (220 Ω)</span><span>D5</span></li>
+              <li><span>Mic</span><span>built in</span></li>
+              <li><span>Camera</span><span>24-pin ribbon</span></li>
+              <li class="pwr"><span>LiPo</span><span>BAT pads underneath</span></li>
+            </ul>
+          </div>
+          <div class="clip"><h4>Swap out</h4>
+            <ul class="pins">
+              <li><span>− S3 Super Mini</span><span>$8</span></li>
+              <li><span>− INMP441 mic</span><span>$3</span></li>
+              <li><span>− TP4056</span><span>$1</span></li>
+              <li><span>+ XIAO S3 Sense</span><span>$25–30</span></li>
+              <li><span>+ OV2640 no IR-cut</span><span>$6–8</span></li>
+              <li><span>+ 2× 850 nm IR LED, MOSFET</span><span>$3</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="cards">
+          <div class="clip"><span class="k">V2 all up</span><div class="v">~$75–90</div><span class="s">about $25 more than V1</span></div>
+          <div class="clip"><span class="k">Battery</span><div class="v">~1 hr</div><span class="s">with the camera streaming; go 800–1000 mAh if it fits</span></div>
+        </div>
+        <p class="scrawl red" style="margin-top:20px">no IR-cut = colours look pink in daylight, that's normal</p>
       </section>
 
       <div class="foot"><span>— E.</span><span>entry XI</span></div>
