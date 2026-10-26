@@ -2330,7 +2330,7 @@ p{margin:0 0 12px}
         <div class="vlog">
           <div class="ver"><div class="vtag">V1</div><div class="vbody"><h4>Manual flip-down monocle <span>26 Oct 2026</span></h4><p>Started as "EDITH glasses", renamed so they run Iris. One 1.51" transparent OLED behind a Cardboard lens, an ESP32-S3 Super Mini and mic in an ear pod, and a hinge that clicks up and down on magnets. A reed switch wakes the screen when it flips down. Dropped the servo flip to save weight, battery and money.</p><ul class="pc"><li class="pro">About $50–65 all up</li><li class="pro">Actually readable thanks to the lens, not just a prop</li><li class="pro">Plugs straight into the Iris voice pipeline I already have</li><li class="con">Monochrome light blue, dim in bright sun</li><li class="con">OLED converter board is chunky, frame has to hide it</li><li class="con">Can't cut the OLED down, the edges hold the wiring and seal</li></ul></div></div>
         
-          <div class="ver current"><div class="vtag">V2</div><div class="vbody"><h4>Eyes upgrade: night vision, zoom, hand tracking <span>26 Oct 2026</span></h4><p>Added a forward camera. Swapped the Super Mini + separate mic for a <b>XIAO ESP32S3 Sense</b> (camera port, mic and LiPo charging all built in). The camera is an OV2640 <b>with no IR-cut filter</b>, lit by 850 nm IR LEDs, so it sees in the dark. Zoom is digital: grab a big frame and crop the middle. The camera streams to the PC, where my hand-tracking code (OpenCV + MediaPipe) turns gestures into HUD controls.</p><ul class="pc"><li class="pro">Night vision for about $10 extra</li><li class="pro">Reuses my hand-tracking project instead of starting over</li><li class="pro">XIAO replaces three boards, so the pod gets smaller</li><li class="con">HUD is only 128×64 blue, so the night/zoom view is a tiny dithered picture</li><li class="con">Video over Wi-Fi drains the battery much faster</li><li class="con">Zoom is digital only, gets blocky past ~3×</li></ul></div></div>
+          <div class="ver current"><div class="vtag">V2</div><div class="vbody"><h4>Eyes upgrade: night vision, zoom, hand tracking <span>26 Oct 2026</span></h4><p>Added a forward camera. Swapped the Super Mini + separate mic for a <b>XIAO ESP32S3 Sense</b> (camera port, mic and LiPo charging all built in). The camera is a 5 MP OV5640 <b>with no IR-cut filter</b>, lit by 850 nm IR LEDs, so it sees in the dark. Zoom is digital: the sensor itself crops a window out of its 5 MP view, so up to ~10× still has more pixels than the 128-wide HUD can show. The camera streams to the PC, where my hand-tracking code (OpenCV + MediaPipe) turns gestures into HUD controls.</p><ul class="pc"><li class="pro">Night vision for about $10 extra</li><li class="pro">Reuses my hand-tracking project instead of starting over</li><li class="pro">XIAO replaces three boards, so the pod gets smaller</li><li class="con">HUD is only 128×64 blue, so the night/zoom view is a tiny dithered picture</li><li class="con">Video over Wi-Fi drains the battery much faster</li><li class="pro">Zoom stays sharp on the HUD up to ~10×</li><li class="con">At 10× every head wobble is magnified, and it gets grainy in the dark</li></ul></div></div>
         </div>
       </section>
 
@@ -2524,7 +2524,7 @@ p{margin:0 0 12px}
             <g font-family="Special Elite,monospace" font-size="13" fill="var(--ink)" text-anchor="middle">
               <text x="95" y="62">XIAO S3 Sense</text>
               <text x="390" y="44">Night vision</text><text x="390" y="62" font-size="11">IR on, boost contrast</text>
-              <text x="390" y="112">Zoom</text><text x="390" y="130" font-size="11">crop the middle, 2×–3×</text>
+              <text x="390" y="112">Zoom</text><text x="390" y="130" font-size="11">sensor crop, up to 10×</text>
               <text x="390" y="180">Hand tracking</text><text x="390" y="198" font-size="11">MediaPipe on the PC</text>
               <text x="680" y="112">OLED</text><text x="680" y="130" font-size="11">128×56 view</text>
             </g>
@@ -2566,13 +2566,13 @@ p{margin:0 0 12px}
               <li><span>− INMP441 mic</span><span>$3</span></li>
               <li><span>− TP4056</span><span>$1</span></li>
               <li><span>+ XIAO S3 Sense</span><span>$25–30</span></li>
-              <li><span>+ OV2640 no IR-cut</span><span>$6–8</span></li>
+              <li><span>+ OV5640 5 MP, no IR-cut</span><span>$10–15</span></li>
               <li><span>+ 2× 850 nm IR LED, MOSFET</span><span>$3</span></li>
             </ul>
           </div>
         </div>
         <div class="cards">
-          <div class="clip"><span class="k">V2 all up</span><div class="v">~$75–90</div><span class="s">about $25 more than V1</span></div>
+          <div class="clip"><span class="k">V2 all up</span><div class="v">~$80–95</div><span class="s">about $30 more than V1</span></div>
           <div class="clip"><span class="k">Battery</span><div class="v">~1 hr</div><span class="s">with the camera streaming; go 800–1000 mAh if it fits</span></div>
         </div>
         <p class="scrawl red" style="margin-top:20px">no IR-cut = colours look pink in daylight, that's normal</p>
