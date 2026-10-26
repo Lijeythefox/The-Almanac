@@ -2003,6 +2003,208 @@ p{margin:0 0 12px}
       <div class="foot"><span>— E.</span><span>entry VIII</span></div>
     </article>
 
+    <article id="e009" data-no="IX" data-title="Pip" data-sub="8-servo quadruped with an OLED face" data-date="24 Oct 2026">
+      <div class="dateline"><span>Entry No. 009</span><span>24 October 2026</span><span>Subject: Robotics</span></div>
+      <h2 class="entry-title">Pip the Quadruped</h2>
+      <svg class="underline" viewBox="0 0 420 12" aria-hidden="true"><path d="M2 6C80 9 150 4 240 7S360 4 418 7" fill="none" stroke="var(--sepia)" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <p class="lede">A little four-legged robot. <b>8 servos</b> (2 per leg) do the walking, an ESP32 is the brain, and a tiny OLED screen is its <span class="circled">face</span>. It makes its own Wi-Fi so I can drive it from my phone.</p>
+
+      <section class="versions">
+        <h3>Versions <small>V1 → V3</small></h3>
+        <div class="vlog">
+          <div class="ver"><div class="vtag">V1</div><div class="vbody"><h4>The Sesame plan <span>Oct 2026</span></h4><p>Started from the open-source Sesame robot. Printed all the parts and cleaned up the firmware, renaming everything from Sesame to Pip.</p><ul class="pc"><li class="pro">Proven design, the parts all fit together</li><li class="pro">Firmware already has 46 faces, walking moves and a phone controller</li><li class="con">Not really mine yet, just a rename</li><li class="con">Expects their custom distro PCB</li></ul></div></div>
+          <div class="ver"><div class="vtag">V2</div><div class="vbody"><h4>Custom distro PCB <span>Oct 2026</span></h4><p>Rebuilt the V1 and V3.1 distro boards in KiCad with "Pip The Quadruped" and my name on the silkscreen, plus Gerbers and a BOM for ordering.</p><ul class="pc"><li class="pro">Super neat, everything plugs straight in</li><li class="pro">My own name on a real circuit board</li><li class="con">Found a GND island on V3.1: the 5V regulator's diode isn't grounded</li><li class="con">Costs money and weeks of shipping</li></ul></div></div>
+          <div class="ver current"><div class="vtag">V3</div><div class="vbody"><h4>Hand-wired on a Lolin S2 Mini <span>24 Oct 2026</span></h4><p>Skipped the PCB. Lolin S2 Mini, a buck converter and a glued block of header pins, all soldered by hand. <a class="ink-link" href="https://lijeythefox.github.io/The-Almanac/pip-wiring.html" target="_blank" rel="noopener">Full wiring guide →</a></p><ul class="pc"><li class="pro">Cheap, and I can start right now</li><li class="pro">No PCB design flaws to worry about</li><li class="con">Lots of soldering, easy to mix up a wire</li><li class="con">No perfboard, so the header block is glued together</li></ul></div></div>
+        </div>
+      </section>
+
+      <div class="part"><span>Part one</span>How it fits together</div>
+
+      <section class="wide">
+        <h3>The power path <small>sketch I</small></h3>
+        <p style="max-width:62ch">The battery goes through the switch into the buck converter, which turns it into a steady <b>5 V</b>. That 5 V feeds two rails along the header block. The servos, the S2 Mini and the screen all drink from those rails.</p>
+        <div class="sketch"><div style="max-width:760px">
+          <svg viewBox="0 0 760 360" role="img" aria-label="Sketch of Pip's wiring: battery, switch, buck converter set to 5 volts, two rails feeding the 8-servo header block, the S2 Mini and the OLED face">
+            <defs><marker id="pip-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink)"/></marker></defs>
+            <g filter="url(#rough)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="24" y="60" width="96" height="60" rx="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.2"/>
+              <path d="M120 78H162" stroke="var(--red)" stroke-width="2.4"/>
+              <circle cx="170" cy="78" r="6" stroke="var(--ink)" stroke-width="2"/><path d="M176 76L198 64" stroke="var(--ink)" stroke-width="2.2"/><circle cx="206" cy="78" r="6" stroke="var(--ink)" stroke-width="2"/>
+              <path d="M212 78H250" stroke="var(--red)" stroke-width="2.4"/>
+              <path d="M120 104H250" stroke="var(--blue)" stroke-width="2.4"/>
+              <rect x="250" y="52" width="110" height="76" rx="5" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.2"/>
+              <circle cx="340" cy="68" r="6" stroke="var(--ink-soft)" stroke-width="1.4"/>
+              <path d="M360 78H420V170" stroke="var(--red)" stroke-width="2.6"/>
+              <path d="M360 104H400V200" stroke="var(--blue)" stroke-width="2.6"/>
+              <path d="M410 120q6 0 6 6v18q0 6 -6 6" stroke="var(--ink)" stroke-width="1.8"/>
+              <path d="M396 134H424M396 140H424" stroke="var(--ink)" stroke-width="2"/>
+              <path d="M150 170H740" stroke="var(--red)" stroke-width="2.6"/>
+              <path d="M150 200H740" stroke="var(--blue)" stroke-width="2.6"/>
+              <g stroke="var(--ink)" stroke-width="1.6">
+                <rect x="440" y="150" width="20" height="70" rx="2" fill="var(--card)"/><rect x="476" y="150" width="20" height="70" rx="2" fill="var(--card)"/><rect x="512" y="150" width="20" height="70" rx="2" fill="var(--card)"/><rect x="548" y="150" width="20" height="70" rx="2" fill="var(--card)"/>
+                <rect x="584" y="150" width="20" height="70" rx="2" fill="var(--card)"/><rect x="620" y="150" width="20" height="70" rx="2" fill="var(--card)"/><rect x="656" y="150" width="20" height="70" rx="2" fill="var(--card)"/><rect x="692" y="150" width="20" height="70" rx="2" fill="var(--card)"/>
+              </g>
+              <rect x="150" y="250" width="120" height="86" rx="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.2"/>
+              <rect x="190" y="326" width="40" height="14" rx="3" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.6"/>
+              <path d="M180 170V250" stroke="var(--red)" stroke-width="2"/>
+              <path d="M200 200V250" stroke="var(--blue)" stroke-width="2"/>
+              <rect x="40" y="258" width="76" height="56" rx="4" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.2"/>
+              <rect x="50" y="268" width="56" height="30" rx="2" fill="var(--blue)" fill-opacity=".18" stroke="var(--ink-soft)" stroke-width="1.2"/>
+              <path d="M150 280H116M150 296H116" stroke="var(--ink)" stroke-width="1.6"/>
+              <path d="M70 258V170H150M90 258V200H150" stroke="var(--ink-soft)" stroke-width="1.6" stroke-dasharray="5 4"/>
+              <path d="M270 300H600V230" stroke="#3f6b2f" stroke-width="2" marker-end="url(#pip-arrow)"/>
+            </g>
+            <g fill="var(--ink)"><circle cx="72" cy="282" r="2.4"/><circle cx="86" cy="282" r="2.4"/><path d="M68 290q11 6 22 0" fill="none" stroke="var(--ink)" stroke-width="1.6"/></g>
+            <g font-family="Special Elite,monospace" font-size="13" fill="var(--ink)">
+              <text x="72" y="86" text-anchor="middle">Battery</text><text x="72" y="104" text-anchor="middle" font-size="11">7.4 V</text>
+              <text x="305" y="88" text-anchor="middle">Buck</text><text x="305" y="106" text-anchor="middle" font-size="11">→ 5.0 V</text>
+              <text x="210" y="290" text-anchor="middle">Lolin</text><text x="210" y="308" text-anchor="middle">S2 Mini</text>
+              <text x="78" y="330" text-anchor="middle" font-size="11">OLED</text>
+              <text x="140" y="166" text-anchor="end" font-size="12" fill="var(--red)">5V</text><text x="140" y="196" text-anchor="end" font-size="12" fill="var(--blue)">GND</text>
+              <text x="576" y="142" text-anchor="middle" font-size="11">S0 … S7</text>
+            </g>
+            <g font-family="Reenie Beanie,cursive" font-size="23">
+              <text x="188" y="44" text-anchor="middle" fill="var(--ink)">switch</text>
+              <text x="430" y="122" fill="var(--ink-soft)">big cap</text>
+              <text x="440" y="246" fill="var(--ink)">8 servo plugs (header block)</text>
+              <text x="290" y="324" fill="#3f6b2f">8 signal wires, pins 1–14</text>
+              <text x="290" y="54" fill="var(--red)">set it to 5.0 V BEFORE plugging anything in!</text>
+            </g>
+            <text x="736" y="350" text-anchor="end" font-family="IM Fell English,serif" font-style="italic" font-size="15" fill="var(--ink-soft)">fig. i: everything drinks from the 5 V rails</text>
+          </svg>
+        </div></div>
+      </section>
+
+      <section class="wide">
+        <h3>Pin map <small>Lolin S2 Mini, USB at the bottom</small></h3>
+        <p style="max-width:62ch">All 8 servo pins are down the <b>inner-left column</b> of the S2 Mini, top to bottom. Handy. The screen uses two pins on the outer-right side.</p>
+        <div class="wiring" style="max-width:760px">
+          <div class="clip"><h4>Servo signals</h4>
+            <ul class="pins">
+              <li><span>S0 · R1</span><span>pin 1</span></li>
+              <li><span>S1 · R2</span><span>pin 2</span></li>
+              <li><span>S2 · L1</span><span>pin 4</span></li>
+              <li><span>S3 · L2</span><span>pin 6</span></li>
+              <li><span>S4 · R4</span><span>pin 8</span></li>
+              <li><span>S5 · R3</span><span>pin 10</span></li>
+              <li><span>S6 · L3</span><span>pin 13</span></li>
+              <li><span>S7 · L4</span><span>pin 14</span></li>
+            </ul>
+          </div>
+          <div class="clip"><h4>OLED face</h4>
+            <ul class="pins">
+              <li><span>GND</span><span>GND rail</span></li>
+              <li class="pwr"><span>VCC</span><span>5V rail</span></li>
+              <li><span>SCL</span><span>pin 35</span></li>
+              <li><span>SDA</span><span>pin 33</span></li>
+            </ul>
+          </div>
+          <div class="clip"><h4>Power</h4>
+            <ul class="pins">
+              <li class="pwr"><span>Batt +</span><span>switch → IN+</span></li>
+              <li><span>Batt −</span><span>buck IN−</span></li>
+              <li class="pwr"><span>Buck OUT+</span><span>5V rail</span></li>
+              <li><span>Buck OUT−</span><span>GND rail</span></li>
+              <li class="pwr"><span>S2 VBUS</span><span>5V rail</span></li>
+              <li><span>S2 GND</span><span>GND rail</span></li>
+              <li class="pwr"><span>Big cap</span><span>across rails</span></li>
+            </ul>
+          </div>
+        </div>
+        <p class="scrawl red" style="margin-top:20px">capacitor has a stripe = that leg goes to GND</p>
+      </section>
+
+      <section class="wide">
+        <h3>The header block <small>sketch II · no perfboard!</small></h3>
+        <p style="max-width:62ch">Didn't have any perfboard, so the servo plugs are <b>8 strips of 3 header pins</b> superglued side by side. Each servo plugs into one strip. Then a bare wire runs along the middle row (5 V) and another along the bottom row (GND).</p>
+        <div class="sketch"><div style="max-width:700px">
+          <svg viewBox="0 0 700 300" role="img" aria-label="Sketch of the glued header block: 8 columns of 3 pins; the top row is the signal pins, the middle row is joined by the 5 volt wire and the bottom row by the ground wire">
+            <g filter="url(#rough)" fill="none" stroke-linecap="round">
+              <rect x="110" y="70" width="460" height="150" rx="4" fill="var(--card)" stroke="var(--ink)" stroke-width="2.2"/>
+              <g stroke="var(--ink-soft)" stroke-width="1" stroke-dasharray="3 3">
+                <path d="M167.5 74V216M225 74V216M282.5 74V216M340 74V216M397.5 74V216M455 74V216M512.5 74V216"/>
+              </g>
+              <path d="M120 150H580" stroke="var(--red)" stroke-width="3.2"/>
+              <path d="M120 195H580" stroke="var(--blue)" stroke-width="3.2"/>
+              <path d="M139 105V40M196 105V40M254 105V40M311 105V40M369 105V40M426 105V40M484 105V40M541 105V40" stroke="#3f6b2f" stroke-width="1.8"/>
+            </g>
+            <g fill="var(--ink)">
+              <rect x="134" y="100" width="10" height="10"/><rect x="191.5" y="100" width="10" height="10"/><rect x="249" y="100" width="10" height="10"/><rect x="306.5" y="100" width="10" height="10"/><rect x="364" y="100" width="10" height="10"/><rect x="421.5" y="100" width="10" height="10"/><rect x="479" y="100" width="10" height="10"/><rect x="536.5" y="100" width="10" height="10"/>
+              <rect x="134" y="145" width="10" height="10"/><rect x="191.5" y="145" width="10" height="10"/><rect x="249" y="145" width="10" height="10"/><rect x="306.5" y="145" width="10" height="10"/><rect x="364" y="145" width="10" height="10"/><rect x="421.5" y="145" width="10" height="10"/><rect x="479" y="145" width="10" height="10"/><rect x="536.5" y="145" width="10" height="10"/>
+              <rect x="134" y="190" width="10" height="10"/><rect x="191.5" y="190" width="10" height="10"/><rect x="249" y="190" width="10" height="10"/><rect x="306.5" y="190" width="10" height="10"/><rect x="364" y="190" width="10" height="10"/><rect x="421.5" y="190" width="10" height="10"/><rect x="479" y="190" width="10" height="10"/><rect x="536.5" y="190" width="10" height="10"/>
+            </g>
+            <g font-family="Special Elite,monospace" font-size="12" fill="var(--ink)" text-anchor="middle">
+              <text x="139" y="246">S0</text><text x="196" y="246">S1</text><text x="254" y="246">S2</text><text x="311" y="246">S3</text><text x="369" y="246">S4</text><text x="426" y="246">S5</text><text x="484" y="246">S6</text><text x="541" y="246">S7</text>
+              <text x="139" y="32" font-size="11" fill="#3f6b2f">1</text><text x="196" y="32" font-size="11" fill="#3f6b2f">2</text><text x="254" y="32" font-size="11" fill="#3f6b2f">4</text><text x="311" y="32" font-size="11" fill="#3f6b2f">6</text><text x="369" y="32" font-size="11" fill="#3f6b2f">8</text><text x="426" y="32" font-size="11" fill="#3f6b2f">10</text><text x="484" y="32" font-size="11" fill="#3f6b2f">13</text><text x="541" y="32" font-size="11" fill="#3f6b2f">14</text>
+            </g>
+            <g font-family="Reenie Beanie,cursive" font-size="23">
+              <text x="100" y="110" text-anchor="end" fill="#3f6b2f">signal</text>
+              <text x="100" y="157" text-anchor="end" fill="var(--red)">5V</text>
+              <text x="100" y="202" text-anchor="end" fill="var(--blue)">GND</text>
+              <text x="590" y="157" fill="var(--red)">bare wire</text>
+              <text x="590" y="202" fill="var(--blue)">bare wire</text>
+              <text x="350" y="282" text-anchor="middle" fill="var(--ink-soft)">servo plug: yellow/orange up, brown down</text>
+            </g>
+            <text x="20" y="20" font-family="IM Fell English,serif" font-style="italic" font-size="15" fill="var(--ink-soft)">fig. ii: 8 × 3 pins, glued</text>
+          </svg>
+        </div></div>
+        <div class="clip tilt-l" style="max-width:52ch;margin-top:26px"><span style="font-size:.95rem">Other options if the glue is too wobbly: buy a perfboard from Jaycar (<b>HP9550</b>), or 3D-print a little holder with a 3 × 8 grid of 1.1 mm square holes, 2.54 mm apart.</span></div>
+      </section>
+
+      <div class="part"><span>Part two</span>Building it</div>
+
+      <section>
+        <h3>Parts</h3>
+        <ul class="parts">
+          <li>Lolin S2 Mini <i>(ESP32-S2, the brain)</i></li>
+          <li>8 × MG90S servos <i>(180°, metal gear)</i></li>
+          <li>0.96" I²C OLED, SSD1306 <i>(the face)</i></li>
+          <li>Buck converter <i>(set to 5.0 V)</i></li>
+          <li>2S 7.4 V battery + plug <i>(5–12 V works)</i></li>
+          <li>Slide or toggle switch</li>
+          <li>470–1000 µF capacitor <i>(10 V or more)</i></li>
+          <li>Male header strips <i>(8 × 3 pins)</i></li>
+          <li>Hook-up wire + bare wire for the rails</li>
+          <li>Superglue + heat-shrink</li>
+          <li>All the printed body parts</li>
+          <li>Soldering iron + multimeter</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Screws</h3>
+        <div class="cards">
+          <div class="clip"><span class="k">Body screws</span><div class="v">~40 × M2×5</div><span class="s">self-tapping, straight into the plastic</span></div>
+          <div class="clip"><span class="k">Servo horns</span><div class="v">10 × M2.5×5</div><span class="s">machine screws, horns onto the servos</span></div>
+        </div>
+        <p class="scrawl" style="margin-top:20px">get a few spares, they WILL roll under the desk</p>
+      </section>
+
+      <section>
+        <h3>Firmware</h3>
+        <p>Arduino IDE with the <b>ESP32</b> boards installed, board set to <span class="path">LOLIN S2 Mini</span>. Libraries: <b>ESP32Servo</b>, <b>Adafruit SSD1306</b> and <b>Adafruit GFX</b>. Then upload <span class="file">Pip-firmware-main.ino</span>.</p>
+        <div class="test"><b>Test</b><span>Join the Wi-Fi called <b>Pip-Controller</b> on my phone. The controller page should pop up, and the face should show up on the screen.</span></div>
+      </section>
+
+      <section>
+        <h3>Build steps</h3>
+        <ul class="todo">
+          <li><label><input type="checkbox" id="t009-a"><span>Glue the 8 header strips into one block. Solder the 5V wire along the middle row and the GND wire along the bottom row.</span></label></li>
+          <li><label><input type="checkbox" id="t009-b"><span>Battery + through the switch to buck IN+, battery − to IN−. Turn the little screw until the multimeter says <b>5.0 V</b>.</span></label></li>
+          <li><label><input type="checkbox" id="t009-c"><span>Buck OUT+ to the 5V rail, OUT− to the GND rail. Solder the big capacitor across the rails (stripe to GND).</span></label></li>
+          <li><label><input type="checkbox" id="t009-d"><span>8 signal wires from S2 pins 1, 2, 4, 6, 8, 10, 13, 14 to the top row of the block, in order S0 → S7.</span></label></li>
+          <li><label><input type="checkbox" id="t009-e"><span>S2 VBUS to the 5V rail and S2 GND to the GND rail.</span></label></li>
+          <li><label><input type="checkbox" id="t009-f"><span>OLED: GND, VCC to 5V, SCL to pin 35, SDA to pin 33.</span></label></li>
+          <li><label><input type="checkbox" id="t009-g"><span>Beep-test with the multimeter: 5V and GND must NOT be connected to each other.</span></label></li>
+          <li><label><input type="checkbox" id="t009-h"><span>Upload the firmware and centre all the servos before screwing the horns on.</span></label></li>
+          <li><label><input type="checkbox" id="t009-i"><span>Assemble the legs and body with the M2 screws. Then make it walk!</span></label></li>
+        </ul>
+        <div class="stamp"><b>Careful</b><span>Set the buck to 5.0 V before anything is plugged in. Too much voltage cooks the servos and the S2.<br>Don't plug in USB and the battery at the same time.<br>Unplug the battery while soldering.</span></div>
+      </section>
+
+      <div class="foot"><span>— E.</span><span>entry IX</span></div>
+    </article>
+
     <article id="e010" data-no="X" data-title="MG90S Hexapod" data-sub="Six-legged walker + ESP32 remote" data-date="24 Oct 2026">
       <div class="dateline"><span>Entry No. 010</span><span>24 October 2026</span><span>Subject: Robotics &amp; build</span></div>
       <h2 class="entry-title">The MG90S Hexapod</h2>
@@ -2115,6 +2317,189 @@ p{margin:0 0 12px}
       </section>
 
       <div class="foot"><span>— E.</span><span>entry X</span></div>
+    </article>
+
+    <article id="e011" data-no="XI" data-title="Iris Glasses" data-sub="Flip-down transparent OLED HUD for Iris" data-date="26 Oct 2026">
+      <div class="dateline"><span>Entry No. 011</span><span>26 October 2026</span><span>Subject: Wearables &amp; AI</span></div>
+      <h2 class="entry-title">The Iris Glasses</h2>
+      <svg class="underline" viewBox="0 0 420 12" aria-hidden="true"><path d="M2 6C80 9 150 4 240 7S360 4 418 7" fill="none" stroke="var(--sepia)" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <p class="lede">A cyberpunk <b>one-eye HUD</b> for Iris. A <span class="circled">transparent OLED</span> on a flip-down arm swings in front of my right eye. The glasses listen, send my voice to Iris on the PC over Wi-Fi, and show her replies floating in front of me. Goal: hella cheap but still good.</p>
+
+      <section class="versions">
+        <h3>Versions <small>V1</small></h3>
+        <div class="vlog">
+          <div class="ver current"><div class="vtag">V1</div><div class="vbody"><h4>Manual flip-down monocle <span>26 Oct 2026</span></h4><p>Started as "EDITH glasses", renamed so they run Iris. One 1.51" transparent OLED behind a Cardboard lens, an ESP32-S3 Super Mini and mic in an ear pod, and a hinge that clicks up and down on magnets. A reed switch wakes the screen when it flips down. Dropped the servo flip to save weight, battery and money.</p><ul class="pc"><li class="pro">About $50–65 all up</li><li class="pro">Actually readable thanks to the lens, not just a prop</li><li class="pro">Plugs straight into the Iris voice pipeline I already have</li><li class="con">Monochrome light blue, dim in bright sun</li><li class="con">OLED converter board is chunky, frame has to hide it</li><li class="con">Can't cut the OLED down, the edges hold the wiring and seal</li></ul></div></div>
+        </div>
+      </section>
+
+      <div class="part"><span>Part one</span>How it fits together</div>
+
+      <section class="wide">
+        <h3>Side view <small>sketch I</small></h3>
+        <p style="max-width:62ch">The ear pod holds the brain and battery. An arm runs forward along the brow to a <b>hinge</b>, and the eyepiece hangs off it. Flipped down, the OLED sits in a short tube with the <b>lens on my eye's side</b>, so the text looks like it's floating a metre or so away instead of a blurry smudge 3 cm from my eyeball.</p>
+        <div class="sketch"><div style="max-width:760px">
+          <svg viewBox="0 0 760 380" role="img" aria-label="Side view sketch of the Iris glasses: the head faces left, an ear pod with the ESP32-S3 and battery sits above the ear, an arm runs forward to a hinge at the brow, and the eyepiece flips down in front of the eye with the transparent OLED at the far end of a tube and the lens nearest the eye. A dashed outline shows the eyepiece flipped up.">
+            <defs><marker id="iris-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink)"/></marker></defs>
+            <g filter="url(#rough)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M300 40C230 40 196 82 192 130C190 150 184 160 170 178C164 188 172 194 182 196C180 214 184 232 196 246C190 262 196 276 214 280C240 286 262 300 270 340" stroke="var(--ink-soft)" stroke-width="2"/>
+              <path d="M300 40C420 36 520 90 530 180C536 240 500 300 470 340" stroke="var(--ink-soft)" stroke-width="2"/>
+              <path d="M222 166q12 -8 24 0q-12 8 -24 0z" stroke="var(--ink)" stroke-width="1.8"/>
+              <circle cx="234" cy="166" r="3.5" fill="var(--ink)" stroke="none"/>
+              <path d="M420 170q22 -10 26 12q4 26 -18 30" stroke="var(--ink-soft)" stroke-width="1.8"/>
+              <rect x="400" y="96" width="118" height="62" rx="12" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4"/>
+              <path d="M412 112h44M412 124h44M412 136h44" stroke="var(--ink-soft)" stroke-width="1.4"/>
+              <path d="M500 96L522 34" stroke="var(--ink)" stroke-width="3"/>
+              <circle cx="522" cy="32" r="4" fill="var(--red)" stroke="var(--ink)" stroke-width="1.4"/>
+              <path d="M400 118C340 110 280 108 246 112" stroke="var(--ink)" stroke-width="3"/>
+              <circle cx="240" cy="113" r="8" fill="var(--card)" stroke="var(--ink)" stroke-width="2.2"/>
+              <circle cx="240" cy="113" r="2.5" fill="var(--ink)" stroke="none"/>
+              <path d="M236 120L196 150" stroke="var(--ink)" stroke-width="3"/>
+              <rect x="120" y="148" width="84" height="36" rx="5" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4"/>
+              <path d="M128 152V180" stroke="var(--blue)" stroke-width="4"/>
+              <path d="M196 150q8 16 0 32" stroke="var(--ink)" stroke-width="2.2"/>
+              <path d="M140 166H214" stroke="var(--blue)" stroke-width="1.4" stroke-dasharray="4 4"/>
+              <g stroke="var(--ink-soft)" stroke-width="1.4" stroke-dasharray="5 4">
+                <path d="M244 104L262 64"/>
+                <rect x="232" y="20" width="36" height="84" rx="5" transform="rotate(25 250 62)"/>
+              </g>
+              <path d="M290 74q-26 -10 -40 10" stroke="var(--ink-soft)" stroke-width="1.6" marker-end="url(#iris-arrow)"/>
+              <path d="M128 200V236M196 200V236" stroke="var(--ink)" stroke-width="1.2"/>
+              <path d="M134 230H190" stroke="var(--ink)" stroke-width="1.2" marker-start="url(#iris-arrow)" marker-end="url(#iris-arrow)"/>
+              <path d="M405 160V230" stroke="var(--ink-soft)" stroke-width="1.4" stroke-dasharray="3 3"/>
+            </g>
+            <g font-family="Special Elite,monospace" font-size="12" fill="var(--ink)">
+              <text x="459" y="88" text-anchor="middle">ear pod</text>
+              <text x="470" y="128" font-size="11">ESP32-S3</text><text x="470" y="144" font-size="11">+ LiPo</text>
+              <text x="162" y="252" text-anchor="middle" font-size="11">~35 mm</text>
+              <text x="248" y="96" font-size="11">hinge</text>
+            </g>
+            <g font-family="Reenie Beanie,cursive" font-size="23">
+              <text x="40" y="140" fill="var(--blue)">transparent</text><text x="40" y="160" fill="var(--blue)">OLED</text>
+              <text x="182" y="216" fill="var(--ink)">lens</text>
+              <text x="534" y="40" fill="var(--red)">antenna stub + status LED</text>
+              <text x="300" y="62" fill="var(--ink-soft)">flips up = screen sleeps</text>
+              <text x="300" y="138" fill="var(--ink)">arm along the brow</text>
+              <text x="412" y="250" fill="#3f6b2f">mic in the pod, facing forward</text>
+              <text x="60" y="300" fill="var(--red)">OLED sits just inside the lens's focal length,</text>
+              <text x="60" y="322" fill="var(--red)">so the text floats out in front of me</text>
+            </g>
+            <text x="736" y="368" text-anchor="end" font-family="IM Fell English,serif" font-style="italic" font-size="15" fill="var(--ink-soft)">fig. i: head facing left, eyepiece flipped down</text>
+          </svg>
+        </div></div>
+      </section>
+
+      <section class="wide">
+        <h3>How Iris talks to it <small>sketch II</small></h3>
+        <p style="max-width:62ch">The glasses are just the eyes and ears. All the thinking still happens on the PC: the ESP32 streams mic audio over Wi-Fi, <b>Whisper</b> turns it into text, <b>Ollama</b> writes the reply, and the reply text comes back to the OLED.</p>
+        <div class="sketch"><div style="max-width:760px">
+          <svg viewBox="0 0 760 200" role="img" aria-label="Flow sketch: the glasses' mic sends audio over Wi-Fi to the PC, where Whisper turns it into text and Ollama writes a reply, and the reply text is sent back over Wi-Fi to the OLED.">
+            <defs><marker id="iris-arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink)"/></marker></defs>
+            <g filter="url(#rough)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="20" y="50" width="150" height="90" rx="8" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.2"/>
+              <rect x="300" y="50" width="130" height="90" rx="8" fill="var(--card)" stroke="var(--ink)" stroke-width="2.2"/>
+              <rect x="560" y="50" width="160" height="90" rx="8" fill="var(--card)" stroke="var(--ink)" stroke-width="2.2"/>
+              <path d="M170 78H296" stroke="#3f6b2f" stroke-width="2.2" marker-end="url(#iris-arrow2)"/>
+              <path d="M430 95H556" stroke="var(--ink)" stroke-width="2.2" marker-end="url(#iris-arrow2)"/>
+              <path d="M640 140V178H95V144" stroke="var(--blue)" stroke-width="2.2" marker-end="url(#iris-arrow2)"/>
+            </g>
+            <g font-family="Special Elite,monospace" font-size="13" fill="var(--ink)" text-anchor="middle">
+              <text x="95" y="90">Iris glasses</text><text x="95" y="110" font-size="11">mic + OLED</text>
+              <text x="365" y="90">Whisper</text><text x="365" y="110" font-size="11">speech → text</text>
+              <text x="640" y="90">Ollama</text><text x="640" y="110" font-size="11">Llama 3.1 8B</text>
+            </g>
+            <g font-family="Reenie Beanie,cursive" font-size="22">
+              <text x="180" y="66" fill="#3f6b2f">my voice (Wi-Fi)</text>
+              <text x="250" y="170" fill="var(--blue)">reply text back to the HUD (Wi-Fi)</text>
+              <text x="560" y="36" fill="var(--ink-soft)">on the PC, iris_voice.py</text>
+            </g>
+          </svg>
+        </div></div>
+      </section>
+
+      <section class="wide">
+        <h3>Pin map <small>ESP32-S3 Super Mini</small></h3>
+        <p style="max-width:62ch">The OLED is on <b>SPI</b> (fast enough for smooth scrolling text), the mic is on <b>I²S</b>, and the reed switch just needs one pin with the built-in pull-up turned on.</p>
+        <div class="wiring" style="max-width:760px">
+          <div class="clip"><h4>Transparent OLED</h4>
+            <ul class="pins">
+              <li><span>GND</span><span>GND</span></li>
+              <li class="pwr"><span>VCC</span><span>3V3</span></li>
+              <li><span>SCK / CLK</span><span>GPIO 12</span></li>
+              <li><span>MOSI / DIN</span><span>GPIO 11</span></li>
+              <li><span>CS</span><span>GPIO 10</span></li>
+              <li><span>DC</span><span>GPIO 9</span></li>
+              <li><span>RST</span><span>GPIO 8</span></li>
+            </ul>
+          </div>
+          <div class="clip"><h4>INMP441 mic</h4>
+            <ul class="pins">
+              <li><span>GND</span><span>GND</span></li>
+              <li class="pwr"><span>VDD</span><span>3V3</span></li>
+              <li><span>SCK</span><span>GPIO 4</span></li>
+              <li><span>WS</span><span>GPIO 5</span></li>
+              <li><span>SD</span><span>GPIO 6</span></li>
+              <li><span>L/R</span><span>GND</span></li>
+            </ul>
+          </div>
+          <div class="clip"><h4>Switches, LED, power</h4>
+            <ul class="pins">
+              <li><span>Reed switch</span><span>GPIO 7 + GND</span></li>
+              <li><span>LED (220 Ω)</span><span>GPIO 2 + GND</span></li>
+              <li class="pwr"><span>LiPo +</span><span>TP4056 B+</span></li>
+              <li><span>LiPo −</span><span>TP4056 B−</span></li>
+              <li class="pwr"><span>TP4056 OUT+</span><span>switch → 5V pin</span></li>
+              <li><span>TP4056 OUT−</span><span>GND</span></li>
+            </ul>
+          </div>
+        </div>
+        <p class="scrawl red" style="margin-top:20px">don't cut the OLED! hide its edges in the frame instead</p>
+      </section>
+
+      <div class="part"><span>Part two</span>Building it</div>
+
+      <section>
+        <h3>Parts <small>rough AliExpress prices, AUD</small></h3>
+        <ul class="parts">
+          <li>1.51" transparent OLED, SSD1309 <i>($25–35, the big one)</i></li>
+          <li>ESP32-S3 Super Mini <i>($7–9, the brain)</i></li>
+          <li>INMP441 I²S mic <i>($3)</i></li>
+          <li>Google Cardboard lens <i>($3–5, ~40 mm focal)</i></li>
+          <li>500 mAh LiPo <i>($5–7)</i></li>
+          <li>TP4056 USB-C charger board <i>($1)</i></li>
+          <li>Slide switch + reed switch <i>(~$2)</i></li>
+          <li>2 × 6×3 mm magnets <i>(hinge clicks)</i></li>
+          <li>LED + 220 Ω resistor</li>
+          <li>M2 screws + PETG <i>(already have)</i></li>
+        </ul>
+        <div class="cards">
+          <div class="clip"><span class="k">All up</span><div class="v">~$50–65</div><span class="s">the OLED is about half of it</span></div>
+          <div class="clip"><span class="k">Little Bird OLED</span><div class="v">+~$20</div><span class="s">faster from Sydney, but pricier</span></div>
+        </div>
+      </section>
+
+      <section>
+        <h3>Software</h3>
+        <p>On the ESP32: Arduino IDE with the <b>ESP32</b> boards installed, board set to <span class="path">ESP32S3 Dev Module</span> (USB CDC On Boot: Enabled). Library: <b>U8g2</b>, using <span class="path">U8G2_SSD1309_128X64_NONAME2_F_4W_HW_SPI</span>. It streams mic audio to the PC and draws whatever text comes back.</p>
+        <p>On the PC: a small receiver added to <span class="file">iris_voice.py</span> that takes the glasses' audio instead of the desk mic, runs it through Whisper and Ollama like normal, then sends the reply text back.</p>
+        <div class="test"><b>Test</b><span>Flip the eyepiece down and the screen wakes. Say "Iris, what time is it?" and the answer should scroll across the HUD.</span></div>
+      </section>
+
+      <section>
+        <h3>Build steps</h3>
+        <ul class="todo">
+          <li><label><input type="checkbox" id="t011-a"><span>Breadboard the OLED with the U8g2 demo and get text showing.</span></label></li>
+          <li><label><input type="checkbox" id="t011-b"><span>Hold the Cardboard lens in front of my eye and slide the OLED back and forth until the text is sharp. Measure that gap, it decides the eyepiece tube length.</span></label></li>
+          <li><label><input type="checkbox" id="t011-c"><span>Wire the INMP441 mic and check the audio levels in the serial plotter.</span></label></li>
+          <li><label><input type="checkbox" id="t011-d"><span>Add the receiver to iris_voice.py and get a reply showing on the OLED.</span></label></li>
+          <li><label><input type="checkbox" id="t011-e"><span>Reed switch on GPIO 7: screen on when flipped down, off when up.</span></label></li>
+          <li><label><input type="checkbox" id="t011-f"><span>LiPo → TP4056 → switch → 5V pin. Check it charges over USB-C.</span></label></li>
+          <li><label><input type="checkbox" id="t011-g"><span>Design and print the frame on the P2S around the measured lens gap, with magnet pockets in the hinge and the OLED's edges tucked out of sight.</span></label></li>
+          <li><label><input type="checkbox" id="t011-h"><span>Final assembly, glossy shell, antenna stub. Wear it!</span></label></li>
+        </ul>
+        <div class="stamp"><b>Careful</b><span>Never cut or snap the OLED glass, it dies.<br>LiPo pinned near my head: no puncturing, no squashing, unplug while soldering.<br>Don't stare at a bright screen right up close for ages, keep the brightness low.</span></div>
+      </section>
+
+      <div class="foot"><span>— E.</span><span>entry XI</span></div>
     </article>
 
   </main>
