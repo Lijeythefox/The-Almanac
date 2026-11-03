@@ -2213,13 +2213,22 @@ p{margin:0 0 12px}
       <p style="margin-top:14px"><a class="ink-link" href="https://lijeythefox.github.io/The-Almanac/hexapod.html" target="_blank" rel="noopener">Open the 3D build + wiring guide →</a> &nbsp;·&nbsp; <a class="ink-link" href="hexapod/walk-cycle.mp4" target="_blank" rel="noopener">watch the walk cycle →</a> &nbsp;·&nbsp; <a class="ink-link" href="hexapod/Hexapod_MG90S_All_Files.zip">all print files (zip) →</a></p>
 
       <section class="versions">
-        <h3>Versions <small>V1 → V4</small></h3>
+        <h3>Versions <small>V1 → V5</small></h3>
         <div class="vlog">
           <div class="ver"><div class="vtag">V1</div><div class="vbody"><h4>Original MG996R spider <span>20 Oct 2026</span></h4><p>The design I started from: Arduino Mega, NRF24 remote, 18 big MG996R servos, 25 cm body.</p><ul class="pc"><li class="pro">Strong servos, proven design</li><li class="con">Big, heavy and expensive to build</li><li class="con">MG90S servos would be too weak to hold it up</li></ul></div></div>
           <div class="ver"><div class="vtag">V2</div><div class="vbody"><h4>Shrunk for MG90S <span>20 Oct 2026</span></h4><p>Redrawn from scratch about 60–65% size. Flush servo pockets, MR85ZZ bearings on every joint, ESP32-C3 + 2 PCA9685 boards, 2S LiPo.</p><ul class="pc"><li class="pro">About 700 g, with roughly 2.4× the femur torque it needs</li><li class="pro">Tripod walk at about 10 cm/s, checked for collisions</li><li class="con">Small servos, so no carrying stuff on its back</li></ul></div></div>
           <div class="ver"><div class="vtag">V3</div><div class="vbody"><h4>Truss cut-outs + remote <span>21 Oct 2026</span></h4><p>Triangle windows on every flat panel, A1-ready plates, and a hex-styled remote with 2 sticks, a height slider and a speed knob.</p><ul class="pc"><li class="pro">Lighter and looks way cooler</li><li class="pro">Prints with no supports</li><li class="con">Only about 10% lighter in the end, the parts were already thin</li></ul></div></div>
-          <div class="ver current"><div class="vtag">V4</div><div class="vbody"><h4>Inserts, cable slots, build guide <span>24 Oct 2026</span></h4><p>M2 brass inserts where screws get undone, cable slots straight out the end of each servo pocket, and a 3D step-by-step build + wiring guide.</p><ul class="pc"><li class="pro">Screws don't strip the PLA</li><li class="pro">Servo leads come out the way the MG90S actually has them</li><li class="con">Still waiting on parts, firmware not written yet</li></ul></div></div>
+          <div class="ver"><div class="vtag">V4</div><div class="vbody"><h4>Inserts, cable slots, build guide <span>24 Oct 2026</span></h4><p>M2 brass inserts where screws get undone, cable slots straight out the end of each servo pocket, and a 3D step-by-step build + wiring guide.</p><ul class="pc"><li class="pro">Screws don't strip the PLA</li><li class="pro">Servo leads come out the way the MG90S actually has them</li><li class="con">Still waiting on parts, firmware not written yet</li></ul></div></div>
+          <div class="ver current"><div class="vtag">V5</div><div class="vbody"><h4>Tougher tibia, all six legs built <span>3 Nov 2026</span></h4><p>Solid, thicker claw and tibia bracket with a collar that locks the claw in place. Robot + remote firmware, one-leg test sketches and a live 3D sim of the leg. Then every leg assembled on the body.</p><ul class="pc"><li class="pro">Tibia no longer flexes</li><li class="pro">All 18 servos in, horns fitted in the zero pose</li><li class="con">Femur servos turn the opposite way to the CAD, so DIR = {1, -1, 1}</li></ul></div></div>
         </div>
+      </section>
+
+      <section class="wide">
+        <h3>All six legs on <small>3 Nov 2026</small></h3>
+        <div class="clip tilt-l" style="padding:12px 12px 10px">
+          <img src="hexapod/build-legs-assembled.jpg" alt="The black 3D-printed hexapod with all six legs assembled, a bundle of orange and brown servo leads gathered above the body" style="display:block;width:100%;height:auto;border-radius:2px" loading="lazy">
+        </div>
+        <p class="scrawl" style="margin-top:12px">finally!! all 18 servos in. next: label the plugs + wire the brains</p>
       </section>
 
       <section class="wide">
@@ -2307,10 +2316,12 @@ p{margin:0 0 12px}
       <section>
         <h3>Next up</h3>
         <ul class="todo">
-          <li><label><input type="checkbox" id="t010-a"><span>Print the servo pocket test coupon and test-fit an MG90S.</span></label></li>
-          <li><label><input type="checkbox" id="t010-b"><span>Print the 5 plates.</span></label></li>
-          <li><label><input type="checkbox" id="t010-c"><span>Write the servo centring sketch, robot firmware and remote firmware.</span></label></li>
-          <li><label><input type="checkbox" id="t010-d"><span>Build it with the 3D guide.</span></label></li>
+          <li><label><input type="checkbox" id="t010-a" checked><span>Print the servo pocket test coupon and test-fit an MG90S.</span></label></li>
+          <li><label><input type="checkbox" id="t010-b" checked><span>Print the 5 plates.</span></label></li>
+          <li><label><input type="checkbox" id="t010-c" checked><span>Write the servo centring sketch, robot firmware and remote firmware.</span></label></li>
+          <li><label><input type="checkbox" id="t010-d" checked><span>Build the legs and body with the 3D guide.</span></label></li>
+          <li><label><input type="checkbox" id="t010-f"><span>Label the 18 plugs, wire the C3, PCA9685s and Mini560s.</span></label></li>
+          <li><label><input type="checkbox" id="t010-g"><span>Trim every leg in the zero pose.</span></label></li>
           <li><label><input type="checkbox" id="t010-e"><span>First walk!</span></label></li>
         </ul>
         <div class="stamp"><b>LiPo</b><span>Charge the robot battery on the IMAX B3 only, never the TP4056.<br>Unplug it when I'm done. Never run it flat.</span></div>
@@ -2671,7 +2682,7 @@ p{margin:0 0 12px}
   setView(idx(start)>=0?start:'cover');
 
   [].forEach.call(document.querySelectorAll('.todo input'),function(c){
-    try{c.checked=localStorage.getItem('almanac:'+c.id)==='1';}catch(e){}
+    try{var sv=localStorage.getItem('almanac:'+c.id);if(sv!==null)c.checked=sv==='1';}catch(e){}
     c.addEventListener('change',function(){try{localStorage.setItem('almanac:'+c.id,c.checked?'1':'0');}catch(e){}});
   });
 })();
