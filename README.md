@@ -6,6 +6,8 @@ Elijah's project notebook, kept like an explorer's field journal.
 - **Arc Reactor Cell (3D model):** https://lijeythefox.github.io/The-Almanac/reactor.html
 - **Hexapod build + wiring guide (3D):** https://lijeythefox.github.io/The-Almanac/hexapod.html
 - **DUM-E Soldering Guide:** https://lijeythefox.github.io/The-Almanac/dume-solder.html
+- **P-01 Pocket Player website:** https://lijeythefox.github.io/The-Almanac/p01/
+- **P-01 3D model:** https://lijeythefox.github.io/The-Almanac/p01/model.html
 
 ## Entries
 
@@ -19,7 +21,10 @@ Elijah's project notebook, kept like an explorer's field journal.
 | VI | NEXUS Cyberdeck (V4) | 19 Oct 2026 |
 | VII | Cursor Control System + I.R.I.S. (V4) | 24 Oct 2026 |
 | VIII | A.W.A. (AI tank with attitude, V4) | 24 Oct 2026 |
-| X | MG90S Hexapod (V4) | 24 Oct 2026 |
+| IX | Pip (quadruped) | 24 Oct 2026 |
+| X | MG90S Hexapod (V5) | 24 Oct 2026 |
+| XI | Iris Glasses (V3) | 26 Oct 2026 |
+| XII | P-01 Pocket Player (V6) | 1 Nov 2026 |
 
 Each page is a single self-contained HTML file. Open it in a browser, no build step.
 

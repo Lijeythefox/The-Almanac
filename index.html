@@ -2594,6 +2594,132 @@ p{margin:0 0 12px}
       <div class="foot"><span>— E.</span><span>entry XI</span></div>
     </article>
 
+    <article id="e012" data-no="XII" data-title="P-01 Pocket Player" data-sub="TE-style music player with a spinning wheel" data-date="1 Nov 2026">
+      <div class="dateline"><span>Entry No. 012</span><span>1 November 2026</span><span>Subject: Audio &amp; PCB design</span></div>
+      <h2 class="entry-title">The P-01 Pocket Player</h2>
+      <svg class="underline" viewBox="0 0 420 12" aria-hidden="true"><path d="M2 7C70 4 160 9 240 6S350 4 418 7" fill="none" stroke="var(--sepia)" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <p class="lede">A Teenage Engineering-style, iPod-ish music player, like the TP-7. Squared-off silver slab, <b>66 × 112 × 12 mm</b>. Plays from a microSD card to Bluetooth headphones, syncs albums from my Navidrome server over Wi-Fi, and has a <span class="circled">46 mm wheel that spins</span> while music plays. Grab it to scrub, press it to select.</p>
+      <p style="margin-top:14px"><a class="ink-link" href="p01/" target="_blank" rel="noopener">Open the P-01 website →</a> &nbsp;·&nbsp; <a class="ink-link" href="p01/model.html" target="_blank" rel="noopener">play with the 3D model →</a> &nbsp;·&nbsp; <a class="ink-link" href="p01/P01_PCBs_rev0.3.zip">both PCBs, Gerbers, BOM + CPL (.zip) →</a></p>
+
+      <section class="versions">
+        <h3>Versions <small>V1 → V6</small></h3>
+        <div class="vlog">
+          <div class="ver"><div class="vtag">V1</div><div class="vbody"><h4>First sketch <span>Nov 2026</span></h4><p>A TP-7-looking slab with an iPod-style wheel, Bluetooth and downloads. Then squarer corners and squashed down to 12 mm thin.</p><ul class="pc"><li class="pro">Looks properly Teenage Engineering</li><li class="pro">12 mm is thinner than most phones with a case</li><li class="con">No brain picked yet, so no idea about battery life</li></ul></div></div>
+          <div class="ver"><div class="vtag">V2</div><div class="vbody"><h4>ESP32-WROVER-E brain <span>Nov 2026</span></h4><p>Picked the ESP32-WROVER-E over a Pi Zero 2 W: Bluetooth audio, Wi-Fi and 8 MB of PSRAM in one module. Rebuilt the 3D model in high detail with a slide-apart exploded view.</p><ul class="pc"><li class="pro">Way better battery life than a Pi</li><li class="pro">Bluetooth Classic (A2DP) for headphones</li><li class="con">Wi-Fi and Bluetooth share one radio, so it only syncs while paused or charging</li></ul></div></div>
+          <div class="ver"><div class="vtag">V3</div><div class="vbody"><h4>First PCBs <span>Nov 2026</span></h4><p>A 4-layer main board (ESP32, microSD, PCM5102A DAC, USB-C charging, jack) and a 2-layer controls board (keys, AS5600). Routed with Freerouting, DRC clean.</p><ul class="pc"><li class="pro">Schematic matches the board net for net</li><li class="pro">Flat flex cable joins the two boards</li><li class="con">Power switch faced into the case. Twice. Fixed.</li></ul></div></div>
+          <div class="ver"><div class="vtag">V4</div><div class="vbody"><h4>The wheel spins (rev 0.3) <span>Nov 2026</span></h4><p>A 6 mm gear motor pokes up through a slot in the controls board and turns the wheel with a rubber O-ring roller. A 6 × 2.5 mm diametric magnet in the hub tells the AS5600 the exact angle. The whole wheel is the select button.</p><ul class="pc"><li class="pro">Cheap: motor + magnet are a few dollars</li><li class="pro">Roller slips under your finger, so you can still scrub by hand</li><li class="con">About 6 h of battery with it spinning (8 h without)</li><li class="con">Motor slot means only 2 mounting holes on the controls board</li></ul></div></div>
+          <div class="ver"><div class="vtag">V5</div><div class="vbody"><h4>Website + even screen border <span>1 Nov 2026</span></h4><p>Built a P-01 website (scroll story, scroll-to-scrub dial, X-ray, live part renders, a hands-on 3D demo). Widened the screen window to 52 × 31 mm so the border is the same 7 mm at the top and sides.</p><ul class="pc"><li class="pro">Front looks balanced now</li><li class="pro">Every picture on the site is rendered live from the model</li><li class="con">Wider window needs a black glass bezel either side of the 2" screen</li></ul></div></div>
+          <div class="ver current"><div class="vtag">V6</div><div class="vbody"><h4>Ready to order + startup satire <span>2 Nov 2026</span></h4><p>Added Alps SKRKAEE020 switches (C115357) to the JLCPCB assembly files so the buttons get soldered too. Lead-free HASL is fine since JLC assembles it. Then turned the website into a parody startup fixing the "Rotational Deficit™".</p><ul class="pc"><li class="pro">Both boards fully assembled by JLCPCB (both sides on the controls board)</li><li class="pro">The website is really, really funny</li><li class="con">JLC was out of the WROVER-E: swap in any WROVER-E <b>…R8</b> variant (not WROVER-IE)</li></ul></div></div>
+        </div>
+      </section>
+
+      <section class="wide">
+        <h3>The model <small>rendered from the 3D file</small></h3>
+        <div class="figure">
+          <div class="clip tilt-l" style="padding:12px 12px 10px">
+            <img src="p01/p01-render.jpg" alt="3D render of the silver P-01: screen at the top showing Eyeless by Slipknot, four round keys with an orange play key, and a big wheel below" style="display:block;width:100%;height:auto;border-radius:2px" loading="lazy">
+          </div>
+          <div style="display:grid;gap:18px"><p class="scrawl">7 mm border top + sides = finally even</p><div class="clip tilt-r"><span style="font-size:.95rem">Songs on the demo screen: Eyeless (Slipknot), Numb (Linkin Park), Living In Chaos (The Offspring).</span></div></div>
+        </div>
+      </section>
+
+      <section class="wide">
+        <h3>How the wheel spins <small>sketch I</small></h3>
+        <svg viewBox="0 0 620 330" role="img" aria-label="Side section of the wheel drive: the gear motor stands under the controls board, its rubber roller pokes up through a slot and presses on the underside of the wheel. A magnet in the wheel hub sits over the AS5600 sensor on the back of the controls board." style="width:100%;max-width:680px;display:block">
+          <defs><marker id="p01-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--red)"/></marker></defs>
+          <g filter="url(#rough)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+            <rect x="240" y="32" width="60" height="12" rx="4" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+            <rect x="110" y="44" width="320" height="30" rx="6" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4"/>
+            <rect x="256" y="80" width="28" height="18" fill="var(--red)" fill-opacity=".18" stroke="var(--red)" stroke-width="2"/>
+            <path d="M270 80V98" stroke="var(--red)" stroke-width="1.4"/>
+            <path d="M60 124H354M406 124H560" stroke="var(--ink)" stroke-width="5"/>
+            <rect x="252" y="130" width="36" height="12" fill="var(--blue)" fill-opacity=".3" stroke="var(--blue)" stroke-width="1.8"/>
+            <circle cx="380" cy="94" r="19" fill="var(--paper)" stroke="var(--ink)" stroke-width="6"/>
+            <circle cx="380" cy="94" r="6" stroke="var(--ink)" stroke-width="2"/>
+            <path d="M380 113V160" stroke="var(--ink)" stroke-width="2.4" stroke-dasharray="5 5"/>
+            <rect x="350" y="160" width="60" height="100" rx="8" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.4"/>
+            <path d="M350 196H410M350 222H410" stroke="var(--ink-soft)" stroke-width="1.4"/>
+            <path d="M40 296H580" stroke="var(--ink-soft)" stroke-width="2"/>
+          </g>
+          <path d="M446 42Q478 30 470 10" fill="none" stroke="var(--red)" stroke-width="1.8" marker-end="url(#p01-arrow)"/>
+          <g stroke-width="1.3" fill="none"><path d="M206 89H252" stroke="var(--red)"/><path d="M222 162Q240 158 252 142" stroke="var(--blue)"/><path d="M426 96H404" stroke="var(--ink)"/></g>
+          <g font-family="Reenie Beanie,cursive" font-size="22">
+            <text x="448" y="64" fill="var(--blue)">wheel (46 mm)</text>
+            <text x="480" y="22" fill="var(--red)">spins ~8.6 rpm</text>
+            <text x="56" y="94" fill="var(--red)">magnet (N|S)</text>
+            <text x="60" y="116" fill="var(--blue)">controls board</text>
+            <text x="40" y="172" fill="var(--blue)">AS5600 on the back</text>
+            <text x="430" y="90" fill="var(--ink)">rubber roller</text>
+            <text x="430" y="110" fill="var(--ink)">up through the slot</text>
+            <text x="424" y="204" fill="var(--ink)">6 mm gear motor</text>
+            <text x="424" y="224" fill="var(--ink-soft)">PWM from GPIO 2</text>
+            <text x="44" y="288" fill="var(--ink-soft)">back cover</text>
+          </g>
+          <text x="40" y="322" font-family="IM Fell English,serif" font-style="italic" font-size="14" fill="var(--ink-soft)">fig. i: side section, not to scale. Finger on the wheel = roller slips = scrub.</text>
+        </svg>
+        <p class="scrawl red" style="margin-top:8px">sensor angle not matching the motor speed = someone's touching it</p>
+      </section>
+
+      <section class="wide">
+        <h3>Eleven layers, front to back <small>sketch II</small></h3>
+        <div class="clip tilt-r" style="padding:12px 12px 10px">
+          <img src="p01/p01-exploded.jpg" alt="Exploded 3D view of the P-01 in signal orange: wheel, magnet, keys, front plate, screen, controls board, gear motor, main board, battery, frame and back cover spread apart with labels" style="display:block;width:100%;height:auto;border-radius:2px" loading="lazy">
+        </div>
+        <p class="scrawl" style="margin-top:12px">wheel · magnet · keys · front plate · screen · controls board · motor · main board · battery · frame · back</p>
+      </section>
+
+      <section class="wide">
+        <h3>The boards <small>rev 0.3</small></h3>
+        <div class="wiring">
+          <div class="clip tilt-l" style="padding:10px"><img src="p01/pcb-main-front.png" alt="Main board, front side" style="display:block;width:100%;height:auto" loading="lazy"><span class="s" style="font-family:var(--type);font-size:.8rem">Main · 51 × 37 mm · 4 layers</span></div>
+          <div class="clip tilt-r" style="padding:10px"><img src="p01/pcb-main-back.png" alt="Main board, back side with the ESP32 module, microSD slot and connectors" style="display:block;width:100%;height:auto" loading="lazy"><span class="s" style="font-family:var(--type);font-size:.8rem">Main · back (ESP32 side)</span></div>
+          <div class="clip tilt-l" style="padding:10px"><img src="p01/pcb-controls-front.png" alt="Controls board, front side with the five button pads and the motor slot" style="display:block;width:100%;height:auto" loading="lazy"><span class="s" style="font-family:var(--type);font-size:.8rem">Controls · 51 × 68.5 mm · 2 layers</span></div>
+          <div class="clip tilt-r" style="padding:10px"><img src="p01/pcb-controls-back.png" alt="Controls board, back side with the AS5600, TCA9534 and motor driver" style="display:block;width:100%;height:auto" loading="lazy"><span class="s" style="font-family:var(--type);font-size:.8rem">Controls · back (AS5600 side)</span></div>
+        </div>
+      </section>
+
+      <section>
+        <h3>Numbers</h3>
+        <div class="cards">
+          <div class="clip"><span class="k">Size</span><div class="v">66 × 112</div><span class="s">× 12 mm thin</span></div>
+          <div class="clip"><span class="k">Wheel</span><div class="v">46 mm</div><span class="s">~8.6 rpm while playing</span></div>
+          <div class="clip"><span class="k">Battery</span><div class="v">1000 mAh</div><span class="s">~6 h spinning, ~8 h not</span></div>
+          <div class="clip"><span class="k">Sensor</span><div class="v">4096</div><span class="s">steps per turn (AS5600)</span></div>
+        </div>
+      </section>
+
+      <section>
+        <h3>Brains + pins</h3>
+        <div class="wiring">
+          <div class="clip"><h4>Main board</h4><ul class="pins">
+            <li><span>Brain</span><span>ESP32-WROVER-E N8R8</span></li><li><span>Audio</span><span>BT A2DP + PCM5102A</span></li>
+            <li><span>Screen (J5)</span><span>SPI 14/13/15/27</span></li><li><span>microSD</span><span>SPI 18/19/23/5</span></li>
+            <li><span>Motor PWM</span><span>GPIO 2</span></li><li class="pwr"><span>Power</span><span>USB-C + 1S LiPo</span></li></ul></div>
+          <div class="clip"><h4>Controls board</h4><ul class="pins">
+            <li><span>Wheel angle</span><span>AS5600 (0x36)</span></li><li><span>Keys + LEDs</span><span>TCA9534 (0x20)</span></li>
+            <li><span>I2C</span><span>SDA 33 · SCL 4</span></li><li><span>Buttons</span><span>5 × SKRKAEE020</span></li>
+            <li><span>Motor driver</span><span>AO3400A + B5819WS</span></li><li class="pwr"><span>Link</span><span>8-pin 0.5 mm FFC</span></li></ul></div>
+        </div>
+      </section>
+
+      <section>
+        <h3>Next up</h3>
+        <ul class="todo">
+          <li><label><input type="checkbox" id="t012-a" checked><span>Design both PCBs and make the JLCPCB BOM + CPL files.</span></label></li>
+          <li><label><input type="checkbox" id="t012-b" checked><span>Add the buttons to the assembly files.</span></label></li>
+          <li><label><input type="checkbox" id="t012-c"><span>Find an in-stock ESP32-WROVER-E (…R8) and order both boards from JLCPCB.</span></label></li>
+          <li><label><input type="checkbox" id="t012-d"><span>Check the screen pinout against the J5 pads, and measure the gear motor (6 mm × ~20 mm).</span></label></li>
+          <li><label><input type="checkbox" id="t012-e"><span>Print the front plate, frame and back cover.</span></label></li>
+          <li><label><input type="checkbox" id="t012-f"><span>First flash through the J6 pads, then OTA over Wi-Fi.</span></label></li>
+          <li><label><input type="checkbox" id="t012-g"><span>Firmware: Bluetooth playback, wheel scrubbing, Navidrome sync.</span></label></li>
+        </ul>
+        <div class="stamp"><b>Check</b><span>JLCPCB placement preview before paying:<br>pin-1 dots + every connector facing the edge.</span></div>
+      </section>
+
+      <div class="foot"><span>— E.</span><span>entry XII</span></div>
+    </article>
+
+
   </main>
   </div>
   <nav class="pager" aria-label="Turn the page"><button type="button" id="prev" data-go="">←</button><button type="button" data-go="contents" id="toContents">Contents</button><button type="button" id="next" data-go="">→</button></nav>
