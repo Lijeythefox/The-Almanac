@@ -39,6 +39,12 @@ header a{color:#e9cf93}
 .lab.o{border-left-color:var(--red)}
 .lab.show{opacity:1}
 .prog{position:absolute;left:0;bottom:0;height:3px;background:var(--stitch);opacity:.7;width:0}
+.legend{position:absolute;left:16px;bottom:36px;max-width:min(330px,calc(100% - 32px));background:rgba(20,12,8,.82);border:1px solid rgba(201,164,106,.45);border-radius:8px;padding:9px 12px 7px;
+  font-family:var(--type);font-size:.72rem;line-height:1.35;color:#e9dbb8;opacity:0;transform:translateY(8px);transition:opacity .4s,transform .4s;pointer-events:none}
+.legend.show{opacity:1;transform:none}
+.legend h4{margin:0 0 5px;font-weight:400;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:#c9a46a}
+.legend div{display:flex;gap:8px;align-items:flex-start;margin:3px 0}
+.legend i{flex:0 0 22px;height:6px;border-radius:3px;margin-top:5px;box-shadow:0 0 6px currentColor}
 .lab::after{content:"";position:absolute;left:50%;bottom:-8px;width:1px;height:8px;background:var(--card)}
 .hint{position:absolute;left:18px;bottom:14px;font-family:var(--type);font-size:.68rem;color:#cbb183;opacity:.8}
 .loading{position:absolute;inset:0;display:grid;place-content:center;font-family:var(--fell);font-style:italic;font-size:1.3rem;color:#e9cf93;text-align:center}
@@ -85,10 +91,12 @@ button:focus-visible{outline:2px dashed var(--red);outline-offset:3px}
   <div class="main">
     <div class="stage" id="stage">
       <div class="labels" id="labels"></div>
+      <div class="legend" id="legend" aria-live="polite"></div>
       <div class="prog" id="prog"></div>
       <div class="tools">
         <button type="button" id="play" aria-pressed="false">▶ play all</button>
         <button type="button" id="replay">↻ replay step</button>
+        <button type="button" id="xray" aria-pressed="false">⚡ wiring view</button>
         <button type="button" id="lbl" aria-pressed="true">labels</button>
       </div>
       <div class="hint">every part slides in where it goes · ▶ play all to watch the whole build</div>
@@ -153,6 +161,31 @@ button:focus-visible{outline:2px dashed var(--red);outline-offset:3px}
     });
   }).catch(function(){loading.textContent='Could not load the guide data.';});
 
+  // ---------------- wiring view: ghost everything that isn't electronics
+  var ELEC=/^(c3|esp32|pca_|mini560|cap|switch|tp4056|mt3608|lipo1s|battery|joystick|slider|knob|button)/;
+  var LEGEND={
+    8:[['#ff9a3c','Servo leads: each leg into 3 channels in a row (hip, femur, tibia)'],['#7a4a2a','Brown wire to the GND row, the board edge']],
+    9:[['#e8473a','Power +: battery, switch, Mini560 IN+; each Mini560 OUT+ to its own PCA V+; #1 also to C3 5V'],['#9a9a9a','GND (−): everything shares ground'],
+       ['#ff7a6e','Thin red: 3V3 logic to the PCA boards'],['#4f86ff','SDA: C3 GPIO8'],['#ffd04a','SCL: C3 GPIO9'],['#3fc27a','Battery sense: 100k / 47k divider to GPIO3']],
+    12:[['#e8473a','Power +: 1S cell, TP4056, switch, MT3608 (5.0 V), DevKit VIN; 3V3 to the sticks'],['#9a9a9a','GND (−)'],
+       ['#ffd04a','Stick X: left GPIO34, right GPIO32'],['#4f86ff','Stick Y: left GPIO35, right GPIO33'],['#3fc27a','Height slider: GPIO36'],
+       ['#b77be0','Speed knob: GPIO39'],['#f2f2f2','Action button: GPIO27 (other leg to GND)']]
+  };
+  var xray=false,GREY=new THREE.Color(0x8a8f96),lastT=0;
+  function wireView(){return xray||LEGEND[cur]!==undefined;}
+  function ghostTarget(it){
+    if(!wireView())return 0;
+    if(ELEC.test(it.model))return 0;
+    return it.model==='servo'?.6:1;
+  }
+  function updateLegend(){
+    var el=document.getElementById('legend'),L=LEGEND[cur];
+    if(!L&&xray){var all=[];[9,12,8].forEach(function(k){if(cur>=k)all=all.length?all:LEGEND[k];});L=all.length?all:null;}
+    if(!L){el.classList.remove('show');return;}
+    el.innerHTML='<h4>Wire colours</h4>'+L.map(function(r){return '<div><i style="background:'+r[0]+';color:'+r[0]+'"></i><span>'+r[1]+'</span></div>';}).join('');
+    el.classList.add('show');
+  }
+
   function mat(c){return new THREE.MeshStandardMaterial({color:c,roughness:.6,metalness:/b9bcc2|d4a43a/.test(c)?.55:.05});}
 
   // every part / wire keeps its own progress value v (0 = not there, 1 = in place)
@@ -161,14 +194,16 @@ button:focus-visible{outline:2px dashed var(--red);outline-offset:3px}
     G.inst.forEach(function(it,k){
       var m=new THREE.Mesh(geos[it.model],mat(it.color));
       m.matrixAutoUpdate=false;m.visible=false;scene.add(m);
-      items.push({kind:'part',obj:m,step:it.step,d:it.d||0,frm:it.frm,base:new THREE.Matrix4().set.apply(new THREE.Matrix4(),it.m),
+      items.push({kind:'part',obj:m,model:it.model,col:new THREE.Color(it.color),gh:0,step:it.step,d:it.d||0,frm:it.frm,base:new THREE.Matrix4().set.apply(new THREE.Matrix4(),it.m),
         drop:G.drop.indexOf(k)>=0,v:0,a:null,dv:0,da:null});
     });
     G.wires.forEach(function(w){
       var pts=w.pts.map(function(p){return new THREE.Vector3(p[0],p[1],p[2]);});
       var curve=new THREE.CatmullRomCurve3(pts,false,'catmullrom',.3);
-      var geo=new THREE.TubeGeometry(curve,Math.max(24,pts.length*14),w.r,8,false);
-      var m=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:w.color,roughness:.45}));
+      var geo=new THREE.TubeGeometry(curve,Math.max(24,pts.length*14),w.r*1.7,10,false);
+      var dark=/^#1b1b1b$/i.test(w.color);
+      var m=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:dark?0x2c2c2c:w.color,roughness:.35,
+        emissive:dark?0x9a9a9a:w.color,emissiveIntensity:.08}));
       m.visible=false;scene.add(m);
       items.push({kind:'wire',obj:m,step:w.step,d:w.d||0,total:geo.index?geo.index.count:geo.attributes.position.count,v:0,a:null});
     });
@@ -193,9 +228,10 @@ button:focus-visible{outline:2px dashed var(--red);outline-offset:3px}
     var o=1-it.v,dz=it.drop?G.drop_dz*it.dv:0;
     M.makeTranslation(it.frm[0]*o,it.frm[1]*o,it.frm[2]*o+dz);
     m.matrix.copy(M.multiply(it.base));m.matrixWorldNeedsUpdate=true;
-    var op=Math.min(1,it.v*1.8),tr=op<.999;
-    if(m.material.transparent!==tr){m.material.transparent=tr;m.material.needsUpdate=true;}
+    var op=Math.min(1,it.v*1.8)*(1-.86*it.gh),tr=op<.999,dw=it.gh<.5;
+    if(m.material.transparent!==tr||m.material.depthWrite!==dw){m.material.transparent=tr;m.material.depthWrite=dw;m.material.needsUpdate=true;}
     m.material.opacity=op;
+    m.material.color.copy(it.col).lerp(GREY,it.gh*.6);
     var glow=it.a&&it.a.to===1?(1-it.v):0;
     m.material.emissive.setHex(0x5a3a10);m.material.emissiveIntensity=glow*.9;
   }
@@ -266,6 +302,7 @@ button:focus-visible{outline:2px dashed var(--red);outline-offset:3px}
     document.getElementById('prev').disabled=i===0;
     document.getElementById('next').disabled=i===G.steps.length-1;
     [].forEach.call(document.getElementById('dots').children,function(b,k){b.classList.toggle('on',k===i);b.classList.toggle('done',k<i);});
+    updateLegend();
     try{history.replaceState(null,'','#step'+(i+1));}catch(e){}
   }
 
@@ -284,6 +321,7 @@ button:focus-visible{outline:2px dashed var(--red);outline-offset:3px}
     if(playing){setPlay(false);return;}
     setPlay(true);if(cur===G.steps.length-1)go(0);
   });
+  document.getElementById('xray').addEventListener('click',function(){xray=!xray;this.setAttribute('aria-pressed',xray);updateLegend();});
   document.getElementById('lbl').addEventListener('click',function(){showLabels=!showLabels;this.setAttribute('aria-pressed',showLabels);});
   document.addEventListener('keydown',function(e){if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1);if(e.key===' '&&e.target===document.body){e.preventDefault();document.getElementById('play').click();}});
 
@@ -291,8 +329,14 @@ button:focus-visible{outline:2px dashed var(--red);outline-offset:3px}
   function tick(now){
     requestAnimationFrame(tick);
     camStep(now);
+    var dt=Math.min(.1,(now-(lastT||now))/1000);lastT=now;
+    var wv=wireView(),pulse=.1+.14*(.5+.5*Math.sin(now/320));
     items.forEach(function(it){
       var changed=false;
+      if(it.kind==='part'){var gt=ghostTarget(it);if(Math.abs(gt-it.gh)>.002){it.gh+=(gt-it.gh)*Math.min(1,dt*(reduce?60:3.5));changed=true;}else if(it.gh!==gt){it.gh=gt;changed=true;}}
+      else{var wm=it.obj.material,dim=LEGEND[cur]!==undefined&&it.step!==cur;
+        wm.emissiveIntensity=(wv&&it.step===cur)?pulse:.08;
+        var tgo=dim?.2:1;if(Math.abs(wm.opacity-tgo)>.003){wm.opacity+=(tgo-wm.opacity)*Math.min(1,dt*4);var tw=wm.opacity<.99;if(wm.transparent!==tw||wm.depthWrite===tw){wm.transparent=tw;wm.depthWrite=!tw;wm.needsUpdate=true;}}}
       if(it.a){var t=(now-it.a.s)/it.a.dur;if(t>=0){t=Math.min(1,t);it.v=it.a.from+(it.a.to-it.a.from)*ease(t);if(t>=1){it.v=it.a.to;it.a=null;}changed=true;}}
       if(it.da){var t2=(now-it.da.s)/it.da.dur;if(t2>=0){t2=Math.min(1,t2);it.dv=it.da.from+(it.da.to-it.da.from)*ease(t2);if(t2>=1){it.dv=it.da.to;it.da=null;}changed=true;}}
       if(changed||it.dirty!==false){render(it);it.dirty=!!(it.a||it.da);}
