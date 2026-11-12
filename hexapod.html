@@ -42,6 +42,16 @@ header a{color:#e9cf93}
 .legend{position:absolute;left:16px;bottom:36px;max-width:min(330px,calc(100% - 32px));background:rgba(20,12,8,.82);border:1px solid rgba(201,164,106,.45);border-radius:8px;padding:9px 12px 7px;
   font-family:var(--type);font-size:.72rem;line-height:1.35;color:#e9dbb8;opacity:0;transform:translateY(8px);transition:opacity .4s,transform .4s;pointer-events:none}
 .legend.show{opacity:1;transform:none}
+.wires{margin:14px 0 0;background:var(--card);padding:10px 12px 8px;box-shadow:0 5px 12px -8px rgba(60,30,5,.7)}
+.wires h3{margin:0 0 4px;font-family:var(--fellsc);font-weight:400;font-size:1.15rem;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.wires h3 button{font-family:var(--type);font-size:.7rem;background:var(--ink);color:var(--paper);border:0;border-radius:999px;padding:4px 10px;cursor:pointer}
+.wires ol{list-style:none;margin:0;padding:0;max-height:300px;overflow:auto}
+.wires li button{all:unset;box-sizing:border-box;display:flex;gap:8px;align-items:center;width:100%;padding:3px 6px;border-radius:3px;cursor:pointer;font-family:var(--type);font-size:.74rem;line-height:1.3;color:var(--ink)}
+.wires li button:hover,.wires li button[aria-pressed="true"]{background:rgba(155,42,28,.12)}
+.wires li button:focus-visible{outline:2px solid var(--blue)}
+.wires i{flex:0 0 20px;height:6px;border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.wires small{display:block;font-family:var(--hand);font-size:.8rem;color:var(--ink-soft);margin-top:4px}
+.lab.end{border-left-color:#2e9e5b;font-weight:700}
 .legend h4{margin:0 0 5px;font-weight:400;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:#c9a46a}
 .legend div{display:flex;gap:8px;align-items:flex-start;margin:3px 0}
 .legend i{flex:0 0 22px;height:6px;border-radius:3px;margin-top:5px;box-shadow:0 0 6px currentColor}
@@ -107,6 +117,7 @@ button:focus-visible{outline:2px dashed var(--red);outline-offset:3px}
       <h2 id="stitle">…</h2>
       <div class="need"><h3>You need</h3><ul id="sneed"></ul></div>
       <div class="body" id="sbody"></div>
+      <div class="wires" id="wlist" hidden></div>
       <div class="nav">
         <button type="button" id="prev">← Back</button>
         <div class="dots" id="dots"></div>
@@ -165,8 +176,8 @@ button:focus-visible{outline:2px dashed var(--red);outline-offset:3px}
   var ELEC=/^(c3|esp32|pca_|mini560|cap|switch|tp4056|mt3608|lipo1s|battery|joystick|slider|knob|button)/;
   var LEGEND={
     8:[['#ff9a3c','Servo leads: each leg into 3 channels in a row (hip, femur, tibia)'],['#7a4a2a','Brown wire to the GND row, the board edge']],
-    9:[['#e8473a','Power +: battery, switch, Mini560 IN+; each Mini560 OUT+ to its own PCA V+; #1 also to C3 5V'],['#9a9a9a','GND (−): everything shares ground'],
-       ['#ff7a6e','Thin red: 3V3 logic to the PCA boards'],['#4f86ff','SDA: C3 GPIO8'],['#ffd04a','SCL: C3 GPIO9'],['#3fc27a','Battery sense: 100k / 47k divider to GPIO3']],
+    9:[['#e8473a','Power +: battery, switch, Mini560 IN+; each Mini560 OUT+ to its own PCA V+; #1 also to C3 5V'],['#9a9a9a','Each Mini560 OUT− to its own PCA GND'],['#9a9a9a','GND (−): everything shares ground'],
+       ['#ff7a6e','Thin red: 3V3 logic to the PCA boards'],['#4f86ff','SDA: C3 GPIO8'],['#ffd04a','SCL: C3 GPIO9'],['#3fc27a','Battery sense: 10k / 4.7k junction to GPIO3'],['#d6b98a','Beige 10k: switch out to the junction'],['#8fb6dc','Blue 4.7k: junction to GND']],
     12:[['#e8473a','Power +: 1S cell, TP4056, switch, MT3608 (5.0 V), DevKit VIN; 3V3 to the sticks'],['#9a9a9a','GND (−)'],
        ['#ffd04a','Stick X: left GPIO34, right GPIO32'],['#4f86ff','Stick Y: left GPIO35, right GPIO33'],['#3fc27a','Height slider: GPIO36'],
        ['#b77be0','Speed knob: GPIO39'],['#f2f2f2','Action button: GPIO27 (other leg to GND)']]
@@ -205,7 +216,7 @@ button:focus-visible{outline:2px dashed var(--red);outline-offset:3px}
       var m=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:dark?0x2c2c2c:w.color,roughness:.35,
         emissive:dark?0x9a9a9a:w.color,emissiveIntensity:.08}));
       m.visible=false;scene.add(m);
-      items.push({kind:'wire',obj:m,step:w.step,d:w.d||0,total:geo.index?geo.index.count:geo.attributes.position.count,v:0,a:null});
+      items.push({kind:'wire',obj:m,step:w.step,d:w.d||0,total:geo.index?geo.index.count:geo.attributes.position.count,v:0,a:null,name:w.name,ends:w.ends||['',''],col:w.color,p0:pts[0],p1:pts[pts.length-1]});
     });
     G.labels.forEach(function(l){
       var d=document.createElement('div');d.className='lab'+(l.c?' '+l.c:'');d.textContent=l.t;labelsEl.appendChild(d);
@@ -266,6 +277,29 @@ button:focus-visible{outline:2px dashed var(--red);outline-offset:3px}
     return start+(reduce?1:dur*Math.abs(to-from));
   }
 
+  // ---------------- connection list: tap a wire to light it up, the rest fade
+  var focusW=null,pinned=false,tracing=false,traceAt=0,traceIdx=0,curWires=[];
+  var endA=document.createElement('div'),endB=document.createElement('div');endA.className=endB.className='lab end';labelsEl.appendChild(endA);labelsEl.appendChild(endB);
+  function setFocus(it,pin){focusW=it;if(pin!==undefined)pinned=pin;
+    [].forEach.call(document.querySelectorAll('#wlist li button'),function(b,k){b.setAttribute('aria-pressed',curWires[k]===focusW&&pinned);});
+    if(it){endA.textContent=it.ends[0];endB.textContent=it.ends[1];}}
+  function buildWireList(i){
+    var box=document.getElementById('wlist');curWires=items.filter(function(it){return it.kind==='wire'&&it.step===i&&it.name;});
+    tracing=false;setFocus(null,false);
+    if(!curWires.length){box.hidden=true;box.innerHTML='';return;}
+    box.hidden=false;
+    box.innerHTML='<h3>Connections <button type="button" id="trace">▶ trace each wire</button></h3><ol>'+curWires.map(function(it,k){
+      return '<li><button type="button" aria-pressed="false"><i style="background:'+it.col+'"></i><span>'+(k+1)+'. '+it.name+'</span></button></li>';}).join('')+
+      '</ol><small>Tap a connection to light up that wire (tap again to clear). Hover works too.</small>';
+    [].forEach.call(box.querySelectorAll('li button'),function(b,k){var it=curWires[k];
+      b.addEventListener('mouseenter',function(){if(!pinned&&!tracing)setFocus(it);});
+      b.addEventListener('mouseleave',function(){if(!pinned&&!tracing)setFocus(null);});
+      b.addEventListener('focus',function(){if(!pinned&&!tracing)setFocus(it);});
+      b.addEventListener('click',function(){tracing=false;syncTrace();if(pinned&&focusW===it)setFocus(null,false);else setFocus(it,true);});});
+    document.getElementById('trace').addEventListener('click',function(){tracing=!tracing;traceIdx=0;traceAt=0;if(!tracing)setFocus(null,false);syncTrace();});
+  }
+  function syncTrace(){var b=document.getElementById('trace');if(b)b.textContent=tracing?'❚❚ stop':'▶ trace each wire';}
+
   function go(i){
     if(!G)return;i=Math.max(0,Math.min(G.steps.length-1,i));
     var now=performance.now(),fwd=i>=cur;
@@ -299,6 +333,7 @@ button:focus-visible{outline:2px dashed var(--red);outline-offset:3px}
     var ul=document.getElementById('sneed');ul.innerHTML='';
     s.need.forEach(function(n){var li=document.createElement('li');li.textContent=n;ul.appendChild(li);});
     document.getElementById('sbody').innerHTML=s.html;
+    buildWireList(i);
     document.getElementById('prev').disabled=i===0;
     document.getElementById('next').disabled=i===G.steps.length-1;
     [].forEach.call(document.getElementById('dots').children,function(b,k){b.classList.toggle('on',k===i);b.classList.toggle('done',k<i);});
@@ -334,9 +369,9 @@ button:focus-visible{outline:2px dashed var(--red);outline-offset:3px}
     items.forEach(function(it){
       var changed=false;
       if(it.kind==='part'){var gt=ghostTarget(it);if(Math.abs(gt-it.gh)>.002){it.gh+=(gt-it.gh)*Math.min(1,dt*(reduce?60:3.5));changed=true;}else if(it.gh!==gt){it.gh=gt;changed=true;}}
-      else{var wm=it.obj.material,dim=LEGEND[cur]!==undefined&&it.step!==cur;
-        wm.emissiveIntensity=(wv&&it.step===cur)?pulse:.08;
-        var tgo=dim?.2:1;if(Math.abs(wm.opacity-tgo)>.003){wm.opacity+=(tgo-wm.opacity)*Math.min(1,dt*4);var tw=wm.opacity<.99;if(wm.transparent!==tw||wm.depthWrite===tw){wm.transparent=tw;wm.depthWrite=!tw;wm.needsUpdate=true;}}}
+      else{var wm=it.obj.material,dim=LEGEND[cur]!==undefined&&it.step!==cur,foc=focusW&&focusW.step===cur;
+        wm.emissiveIntensity=foc?(it===focusW?.55+.25*Math.sin(now/180):.02):((wv&&it.step===cur)?pulse:.08);
+        var tgo=foc?(it===focusW?1:.09):(dim?.2:1);if(Math.abs(wm.opacity-tgo)>.003){wm.opacity+=(tgo-wm.opacity)*Math.min(1,dt*4);var tw=wm.opacity<.99;if(wm.transparent!==tw||wm.depthWrite===tw){wm.transparent=tw;wm.depthWrite=!tw;wm.needsUpdate=true;}}}
       if(it.a){var t=(now-it.a.s)/it.a.dur;if(t>=0){t=Math.min(1,t);it.v=it.a.from+(it.a.to-it.a.from)*ease(t);if(t>=1){it.v=it.a.to;it.a=null;}changed=true;}}
       if(it.da){var t2=(now-it.da.s)/it.da.dur;if(t2>=0){t2=Math.min(1,t2);it.dv=it.da.from+(it.da.to-it.da.from)*ease(t2);if(t2>=1){it.dv=it.da.to;it.da=null;}changed=true;}}
       if(changed||it.dirty!==false){render(it);it.dirty=!!(it.a||it.da);}
@@ -352,8 +387,12 @@ button:focus-visible{outline:2px dashed var(--red);outline-offset:3px}
       else if(now>=nextAt){if(cur<G.steps.length-1)go(cur+1);else setPlay(false);}
     }
     var w=stage.clientWidth,h=stage.clientHeight;
+    if(tracing&&settled&&curWires.length){if(now>=traceAt){setFocus(curWires[traceIdx%curWires.length],true);traceIdx++;traceAt=now+2300;}}
+    [[endA,focusW&&focusW.p0],[endB,focusW&&focusW.p1]].forEach(function(e){var on=!!(e[1]&&focusW.step===cur&&settled);
+      if(on){v.copy(e[1]).project(camera);if(v.z>1||Math.abs(v.x)>1.1||Math.abs(v.y)>1.1)on=false;else{e[0].style.left=((v.x+1)/2*w)+'px';e[0].style.top=((1-v.y)/2*h)+'px';}}
+      e[0].classList.toggle('show',on);});
     labs.forEach(function(l){
-      var on=showLabels&&l.step===cur&&settled;
+      var on=showLabels&&l.step===cur&&settled&&!focusW;
       if(on){v.copy(l.p).project(camera);
         if(v.z>1||v.x<-1.1||v.x>1.1||v.y<-1.1||v.y>1.1)on=false;
         else{l.el.style.left=((v.x+1)/2*w)+'px';l.el.style.top=((1-v.y)/2*h)+'px';}}
