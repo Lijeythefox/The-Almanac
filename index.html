@@ -2719,6 +2719,139 @@ p{margin:0 0 12px}
       <div class="foot"><span>— E.</span><span>entry XII</span></div>
     </article>
 
+    <article id="e013" data-no="XIII" data-title="The Parts Drawer" data-sub="two printed drawers taped under the desk" data-date="14 Nov 2026">
+      <div class="dateline"><span>Entry No. 013</span><span>14 November 2026</span><span>Subject: Workshop storage &amp; 3D printing</span></div>
+      <h2 class="entry-title">The Parts Drawer</h2>
+      <svg class="underline" viewBox="0 0 420 12" aria-hidden="true"><path d="M2 7C70 4 160 9 240 6S350 4 418 7" fill="none" stroke="var(--sepia)" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <p class="lede">There's a <b>40 × 20 × 8 cm</b> gap under my desk, behind the black front frame rail (which hangs down 2 cm). Now it holds <span class="circled">two pull-out drawers</span> full of Gridfinity bins for components. Everything is 3D printed, with no metal slides and no screws into the desk. Each drawer runs on two rails that are just taped up with VHB.</p>
+      <p style="margin-top:14px"><a class="ink-link" href="drawer/model.html" target="_blank" rel="noopener">pull the drawers out in 3D →</a> &nbsp;·&nbsp; <a class="ink-link" href="drawer/Parts_Drawer_V1.zip">all STLs, STEPs, CAD script + build guide (.zip) →</a></p>
+
+      <section class="versions">
+        <h3>Versions <small>V1</small></h3>
+        <div class="vlog">
+          <div class="ver current"><div class="vtag">V1</div><div class="vbody"><h4>Two drawers on taped rails <span>14 Nov 2026</span></h4><p>Split the 40 cm into two 198 mm modules so each one prints in one piece and I don't have to pull everything out at once. Each drawer has a 4 × 4 Gridfinity baseplate built into its floor. I first tried a springy stop tab, then swapped it for an M3 screw: the tab ended up hidden under the desk where I'd never reach it.</p><ul class="pc"><li class="pro">Fully printed, so the drawers cost about a kilo of filament</li><li class="pro">The drawer is its own alignment jig for taping the rails</li><li class="pro">Gridfinity, so bins can swap around forever</li><li class="con">Back row only half clears the desk edge (151 mm pull-out)</li><li class="con">Tape keeps it to about 1 kg per drawer</li><li class="con">Need a screwdriver to take a drawer right out</li></ul></div></div>
+        </div>
+      </section>
+
+      <section class="wide">
+        <h3>The model <small>rendered from the CAD</small></h3>
+        <div class="figure">
+          <div class="clip tilt-l" style="padding:12px 12px 10px">
+            <img src="drawer/hero.jpg" alt="3D render: the desk from the front, with the left drawer pulled out from under the black frame rail, full of orange, cream and slate-blue Gridfinity bins" style="display:block;width:100%;height:auto;border-radius:2px" loading="lazy">
+          </div>
+          <div style="display:grid;gap:18px">
+            <p class="scrawl">left one out, right one shut</p>
+            <div class="clip tilt-r" style="padding:8px"><img src="drawer/xray.jpg" alt="The same desk drawn see-through, showing four black rails taped to the underside and both drawers sliding in them" style="display:block;width:100%;height:auto" loading="lazy"><span style="font-family:var(--type);font-size:.78rem">see-through desk: 4 rails</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="wide">
+        <h3>How it hangs <small>sketch I · section through the left rail</small></h3>
+        <svg viewBox="0 0 640 400" role="img" aria-label="Cross-section of the left rail and drawer edge. The rail's flat flange is taped to the desk underside. A wall drops 78 mm, with a lower lip and an upper rib making a channel. The drawer's runner slides in that channel. An M3 screw comes up through the lip into a groove under the runner. A Gridfinity bin sits in the drawer floor. The front frame rail ends 20 mm down and the drawer top is 2 mm below that." style="width:100%;max-width:700px;display:block">
+          <defs><marker id="dr-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink-soft)"/></marker></defs>
+          <path d="M40 31H600" stroke="var(--ink)" stroke-width="2.4"/>
+          <g stroke="var(--ink-soft)" stroke-width="1" opacity=".55"><path d="M60 31L76 15M100 31L116 15M140 31L156 15M180 31L196 15M220 31L236 15M260 31L276 15M300 31L316 15M340 31L356 15M380 31L396 15M420 31L436 15M460 31L476 15M500 31L516 15M540 31L556 15M580 31L596 15"/></g>
+          <path d="M40 114H600" stroke="var(--ink-soft)" stroke-width="1.6" stroke-dasharray="7 6"/>
+          <g filter="url(#rough)" stroke-linejoin="round" stroke-linecap="round">
+            <rect x="120" y="31" width="120" height="3" fill="var(--red)" fill-opacity=".6" stroke="none"/>
+            <path d="M120 34H240V50H180L132 98V298H164V310H132V332H164V346H120Z" fill="var(--ink)" fill-opacity=".14" stroke="var(--ink)" stroke-width="2.2"/>
+            <path d="M134 312H166V332H155V322H141V332H134Z" fill="var(--blue)" fill-opacity=".22" stroke="var(--blue)" stroke-width="2"/>
+            <path d="M166 122H176V309H600V332H166Z" fill="var(--blue)" fill-opacity=".1" stroke="var(--blue)" stroke-width="2.2"/>
+            <path d="M188 327H338L346 309V243H180V309Z" fill="var(--paper)" stroke="var(--sepia)" stroke-width="2"/>
+            <path d="M185 248H341V304" fill="none" stroke="var(--sepia)" stroke-width="1" opacity=".6"/>
+            <rect x="143" y="322" width="10" height="24" fill="var(--red)" fill-opacity=".3" stroke="var(--red)" stroke-width="1.8"/>
+            <rect x="137" y="346" width="22" height="7" rx="2" fill="var(--red)" fill-opacity=".3" stroke="var(--red)" stroke-width="1.8"/>
+          </g>
+          <path d="M612 31V354" stroke="var(--ink-soft)" stroke-width="1.2" marker-start="url(#dr-arrow)" marker-end="url(#dr-arrow)"/>
+          <path d="M586 122V332" stroke="var(--blue)" stroke-width="1.2" marker-start="url(#dr-arrow)" marker-end="url(#dr-arrow)"/>
+          <g fill="none" stroke-width="1.3"><path d="M244 28Q284 10 318 18" stroke="var(--red)"/><path d="M130 304Q104 300 96 290" stroke="var(--ink)"/><path d="M132 336Q104 350 90 352" stroke="var(--blue)"/><path d="M160 352Q196 372 228 370" stroke="var(--red)"/></g>
+          <g font-family="Reenie Beanie,cursive" font-size="22">
+            <text x="322" y="24" fill="var(--red)">VHB tape, whole flange (30 mm)</text>
+            <text x="250" y="80" fill="var(--ink)">rail · PETG</text>
+            <text x="250" y="106" fill="var(--ink-soft)">front frame rail stops here (20 mm)</text>
+            <text x="190" y="146" fill="var(--blue)">drawer top, 2 mm under it</text>
+            <text x="22" y="262" fill="var(--ink)">upper rib:</text>
+            <text x="22" y="282" fill="var(--ink)">no tipping</text>
+            <text x="14" y="372" fill="var(--blue)">runner rides the lip</text>
+            <text x="232" y="376" fill="var(--red)">M3 × 6 tip in the runner groove = stop</text>
+            <text x="356" y="270" fill="var(--sepia)">Gridfinity bin (3U)</text>
+            <text x="356" y="300" fill="var(--sepia)">pockets in the floor</text>
+            <text x="574" y="262" fill="var(--blue)" transform="rotate(-90 574 262)">52 mm drawer</text>
+            <text x="632" y="236" fill="var(--ink-soft)" transform="rotate(-90 632 236)">80 mm space</text>
+          </g>
+          <text x="40" y="396" font-family="IM Fell English,serif" font-style="italic" font-size="14" fill="var(--ink-soft)">fig. i: section looking from the front, 4 px = 1 mm. The right rail is the mirror image.</text>
+        </svg>
+        <p class="scrawl red" style="margin-top:8px">0.5 mm gap everywhere it slides</p>
+      </section>
+
+      <section class="wide">
+        <h3>How far it comes out <small>sketch II · side view</small></h3>
+        <svg viewBox="0 0 640 260" role="img" aria-label="Side view. The rail runs 195 mm back from the frame rail. Closed, the drawer sits under the desk with its front flush with the frame. Pulled out, it slides 151 mm and 38 mm of runner stays in the rail. Three rows of bins clear the desk edge and the back row is half under it." style="width:100%;max-width:700px;display:block">
+          <defs><marker id="dr-arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--red)"/></marker></defs>
+          <g filter="url(#rough)" stroke-linejoin="round" stroke-linecap="round">
+            <rect x="272" y="26" width="340" height="34" fill="var(--sepia)" fill-opacity=".25" stroke="var(--ink)" stroke-width="2"/>
+            <rect x="272" y="60" width="28" height="28" fill="var(--ink)" fill-opacity=".85" stroke="var(--ink)" stroke-width="2"/>
+            <rect x="300" y="60" width="273" height="109" fill="none" stroke="var(--ink-soft)" stroke-width="1.4" stroke-dasharray="6 5"/>
+            <rect x="272" y="91" width="292" height="73" fill="none" stroke="var(--blue)" stroke-width="1.4" stroke-dasharray="3 5" opacity=".7"/>
+            <path d="M61 91H353V164H40V148H44V160H61Z" fill="var(--blue)" fill-opacity=".14" stroke="var(--blue)" stroke-width="2.4"/>
+            <rect x="309" y="160" width="5" height="12" fill="var(--red)" stroke="var(--red)" stroke-width="1"/>
+          </g>
+          <g stroke="var(--sepia)" stroke-width="1.6" fill="none"><path d="M66 158V128H124V158M124 128H183V158M183 128H242V158M242 128H301V158"/></g>
+          <path d="M272 70V230" stroke="var(--red)" stroke-width="1.2" stroke-dasharray="4 4"/>
+          <path d="M61 196H272" stroke="var(--red)" stroke-width="1.4" marker-start="url(#dr-arrow2)" marker-end="url(#dr-arrow2)"/>
+          <path d="M300 182H353" stroke="var(--blue)" stroke-width="1.4" marker-start="url(#dr-arrow2)" marker-end="url(#dr-arrow2)"/>
+          <g font-family="Reenie Beanie,cursive" font-size="22">
+            <text x="420" y="50" fill="var(--ink)">desk</text>
+            <text x="186" y="52" fill="var(--ink)">frame rail</text>
+            <text x="400" y="128" fill="var(--ink-soft)">rail (195 mm)</text>
+            <text x="400" y="150" fill="var(--blue)">closed position</text>
+            <text x="120" y="216" fill="var(--red)">151 mm out</text>
+            <text x="300" y="206" fill="var(--blue)">38 mm stays in</text>
+            <text x="278" y="230" fill="var(--red)">desk edge</text>
+            <text x="64" y="120" fill="var(--sepia)">row 1 · 2 · 3 · 4</text>
+          </g>
+          <text x="40" y="256" font-family="IM Fell English,serif" font-style="italic" font-size="14" fill="var(--ink-soft)">fig. ii: pulled to the stop. Row 4 is half under the desk: spare stock lives there.</text>
+        </svg>
+      </section>
+
+      <section>
+        <h3>Numbers</h3>
+        <div class="cards">
+          <div class="clip"><span class="k">Space</span><div class="v">400 × 200</div><span class="s">× 80 mm under the desk</span></div>
+          <div class="clip"><span class="k">Bins</span><div class="v">2 × 16</div><span class="s">Gridfinity cells, up to 7U tall</span></div>
+          <div class="clip"><span class="k">Pull-out</span><div class="v">151 mm</div><span class="s">38 mm stays in the rail</span></div>
+          <div class="clip"><span class="k">Filament</span><div class="v">~930 g</div><span class="s">4 rails (PETG) + 2 drawers</span></div>
+        </div>
+      </section>
+
+      <section>
+        <h3>Print list</h3>
+        <div class="wiring">
+          <div class="clip"><h4>Per drawer</h4><ul class="pins">
+            <li><span>rail_left + rail_right</span><span>PETG · 4 walls</span></li><li><span>drawer</span><span>227 × 191 mm</span></li>
+            <li><span>Supports</span><span>none, print as loaded</span></li><li class="pwr"><span>Tape</span><span>25 mm VHB, ~40 cm</span></li></ul></div>
+          <div class="clip"><h4>Bins (any mix)</h4><ul class="pins">
+            <li><span>1 × 1 · 3U</span><span>resistors, SMD</span></li><li><span>2 × 1 · 3U</span><span>ICs, headers</span></li>
+            <li><span>2 × 2 · 3U</span><span>modules, sensors</span></li><li><span>1 × 2 · 6U</span><span>jumper wires</span></li></ul></div>
+        </div>
+      </section>
+
+      <section>
+        <h3>Next up</h3>
+        <ul class="todo">
+          <li><label><input type="checkbox" id="t013-a"><span>Measure how thick the front frame rail is front to back (guessed 20 mm, it's FRAME_THICK in drawer.py).</span></label></li>
+          <li><label><input type="checkbox" id="t013-b"><span>Print the two test slices and check the slide fit.</span></label></li>
+          <li><label><input type="checkbox" id="t013-c"><span>Get 25 mm VHB tape and 4 × M3 × 6 screws.</span></label></li>
+          <li><label><input type="checkbox" id="t013-d"><span>Print 4 rails + 2 drawers, tape them up, wait 24 h.</span></label></li>
+          <li><label><input type="checkbox" id="t013-e"><span>Print bins and sort the component pile into them.</span></label></li>
+        </ul>
+        <div class="stamp"><b>Check</b><span>Fit test first: slides free,<br>only a tiny wiggle.</span></div>
+      </section>
+
+      <div class="foot"><span>— E.</span><span>entry XIII</span></div>
+    </article>
+
 
   </main>
   </div>

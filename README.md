@@ -8,6 +8,7 @@ Elijah's project notebook, kept like an explorer's field journal.
 - **DUM-E Soldering Guide:** https://lijeythefox.github.io/The-Almanac/dume-solder.html
 - **P-01 Pocket Player website:** https://lijeythefox.github.io/The-Almanac/p01/
 - **P-01 3D model:** https://lijeythefox.github.io/The-Almanac/p01/model.html
+- **Parts Drawer 3D model:** https://lijeythefox.github.io/The-Almanac/drawer/model.html
 
 ## Entries
 
@@ -25,6 +26,7 @@ Elijah's project notebook, kept like an explorer's field journal.
 | X | MG90S Hexapod (V5) | 24 Oct 2026 |
 | XI | Iris Glasses (V3) | 26 Oct 2026 |
 | XII | P-01 Pocket Player (V6) | 1 Nov 2026 |
+| XIII | The Parts Drawer (V1) | 14 Nov 2026 |
 
 Each page is a single self-contained HTML file. Open it in a browser, no build step.
 
